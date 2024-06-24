@@ -43,6 +43,9 @@
           /* /Commands */
           /* Routes */
           routes: {
+            "#simplypresent/" : function() {
+             document.location.href = "https://glopoly.tech/submodules/SimplyPresent/src/generated.html";
+            },
             "/" : function() {
               editor.pageData.page = 'Start'
             }
@@ -86,6 +89,7 @@
       <ul>
         <li><a href="#">Home</a></li>
         <li><a href="#">About</a></li>
+        <li><a href="#simplypresent/">Simply present</a></li>
         <li><a href="#">Contact</a></li>
       </ul>
     </nav>
@@ -101,8 +105,8 @@
     <div class="main" data-simply-field="page" data-simply-content="template">
     <!-- Page HTML templates -->
     <template data-simply-template="Start">
-      <div is="simply-component" rel="navbar"></div>
-    <div is="simply-component" rel="footer"></div>
+      <simply-render rel="navbar"></simply-render>
+    <simply-render rel="footer"></simply-render>
     
     </template>
     <!-- /Page HTML templates -->
