@@ -1,0 +1,19 @@
+<div class="slides-timer">
+	<input class="hidden" data-simply-field="totalTime">
+	<label class="slides-timer-time total-time">
+		Presentation time left
+      <span data-simply-field="total-time-left" data-simply-transformer="secondsToTime"></span>
+	</label>
+	<label class="slides-timer-time slide-time">
+		Slide time left
+      <span data-simply-field="slide-time-left" data-simply-transformer="secondsToTime"></span>
+	</label>
+	<ul class="slides-timer-slides" data-simply-list="slides">
+	<template>
+		<li class="slides-timer-slide" data-simply-field="time" data-simply-transformer="timeToSize" data-simply-content="fixed">
+			<label class="slides-timer-time"></label>
+		</li>
+	</template>
+	</ul>
+	<i class="slides-timer-cursor" data-simply-field="total-time-left" data-simply-transformer="timeToCursor"></i>
+</div>

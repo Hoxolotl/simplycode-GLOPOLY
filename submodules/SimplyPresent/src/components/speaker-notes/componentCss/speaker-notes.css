@@ -1,0 +1,21 @@
+:root {
+  --speaker-notes-font: monospace;
+  --speaker-notes-font-size: 1.5em;
+  --speaker-notes-padding: 0.5em;
+}
+.slides-speaker-notes {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  font-family: var(--speaker-notes-font);
+  font-size: var(--speaker-notes-font-size);
+  overflow-y: hidden;
+}
+.slides-speaker-note {
+  height: 100%;
+  width: 100%;
+  padding: var(--speaker-notes-padding);
+  overflow: auto;
+}

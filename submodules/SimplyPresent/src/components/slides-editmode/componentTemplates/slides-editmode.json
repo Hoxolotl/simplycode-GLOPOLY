@@ -1,0 +1,21 @@
+{
+  "totalTime" : 100,
+  "slides" : [
+    {
+      "data-simply-template" : "title",
+      "title" : "Title",
+      "description" : "Description",
+      "notes" : "My speaker notes!"
+    },
+    {
+      "data-simply-template" : "title",
+      "title" : "Title",
+      "description" : "Description"
+    },
+    {
+      "data-simply-template" : "title",
+      "title" : "Title",
+      "description" : "Description"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+<script>
+  document.addEventListener('simply-content-loaded',function() {
+    editor.settings['simply-image'] = {
+      style: [
+        {
+          description: 'Size',
+          selector: 'img',
+          styles: [
+            {
+              class: 'cover',
+              name: 'Cover',
+              icon: 'fa-arrows'
+            },
+            {
+              class: 'contain',
+              name: 'Contain',
+              icon: 'fa-expand'
+            },
+            {
+              class: 'actual',
+              name: 'Actual Size',
+              icon: 'fa-picture-o'
+            }
+          ]
+        }
+      ]
+    }
+    editor.settings['simply-image-field'] = editor.settings['simply-image']
+  })
+</script>

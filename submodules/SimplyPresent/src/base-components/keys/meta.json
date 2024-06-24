@@ -1,0 +1,1 @@
+{"id":"keys","description":"This adds keyboard handlers to navigate through the slides. This should be done by adding explicit keyboard key handlers on each component, but SimplyCode doesn't support that yet."}

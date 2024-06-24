@@ -1,0 +1,107 @@
+<!-- This field is needed to have a databinding we can react on -->
+<div class="slide" style="display: none" data-simply-field="slide">1</div>
+<script src="https://cdn.jsdelivr.net/npm/@hyper-hyper-space/core@0.12.0/dist-browser/hhs.min.js"></script>
+<script>
+const simplyHHS = (function() {
+  class DocumentSpace extends HHS.HashedObject {
+
+    constructor() {
+      super();
+      this.setRandomId();
+      this.addDerivedField('contents', new HHS.MutableReference());
+    }
+
+    getClassName() {
+      return 'test/DocumentSpace';
+    }
+
+    init() {
+
+    }
+
+    async validate(references) {
+      return this.getId() !== undefined && this.checkDerivedField('contents') 
+    }
+
+    setValue(value) {
+      return this.contents.setValue(value).then(() => { this.getStore().save(this.contents) });
+    }
+
+    getValue() {
+      return this.contents.getValue();
+    }
+
+    async startSync() {
+
+      let resources = this.getResources();
+
+      if (resources === undefined) {
+        throw new Error('Cannot start sync: resources not configured.');
+      }
+
+      if (resources.config?.id === undefined) {
+        throw new Error('Cannot start sync: local identity has not been defined.');
+      }
+
+      if (resources.store === undefined) {
+        throw new Error('Cannot start sync: a local store has not been configured.')
+      }
+
+      this._node = new HHS.MeshNode(resources);
+
+      this._node.broadcast(this);
+      this._node.sync(this);
+
+      this.contents.loadAndWatchForChanges();
+    }
+
+    async stopSync() {
+      this._node?.stopBroadcast(this);
+      this._node?.stopSync(this);
+    }
+
+    setResources(resources) {
+      super.setResources(resources);
+      this.contents.setResources(resources);
+    }
+
+    addSyncCallback(cb) {
+      this.contents.addMutationOpCallback(async (mut) => {
+        if (!(await this._node.expectingMoreOps(this.contents, new Set([mut.hash()]), undefined, this))) {
+          await this.contents.applyOpFromStore(mut.hash());
+          cb(this.getValue());
+        }
+      });
+    }
+
+  }
+
+  HHS.HashedObject.registerClass('test/DocumentSpace', DocumentSpace);
+
+  let store;
+  let key;
+  let id;
+
+  let resources;
+
+  let init = async () => {
+    store = new HHS.Store(new HHS.WorkerSafeIdbBackend('document-space-example'));
+
+    key = await HHS.RSAKeyPair.generate(1024);
+    id = HHS.Identity.fromKeyPair({name: new HHS.RNGImpl().randomHexString(128)}, key);
+
+    await store.save(key);
+    await store.save(id);
+
+    resources = await HHS.Resources.create({config: {id: id}, store: store});
+    return resources
+  }
+  return {
+    DocumentSpace: DocumentSpace,
+    init: init,
+    ds: {
+      setValue: function() {}
+    }
+  }
+})()
+</script>

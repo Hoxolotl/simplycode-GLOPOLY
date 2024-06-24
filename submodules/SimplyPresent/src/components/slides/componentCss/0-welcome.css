@@ -1,0 +1,14 @@
+.welcome-image {
+  display: flex;
+  padding: 2em;
+  background: #eeeeee; /* Old browsers */
+  background: -moz-linear-gradient(top, #eeeeee 0%, #cccccc 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, #eeeeee 0%,#cccccc 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #eeeeee 0%,#cccccc 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+.slides-present .welcome-slide {
+  display: none;
+}
+.slides-present.simply-empty .welcome-slide {
+  display: grid;
+}

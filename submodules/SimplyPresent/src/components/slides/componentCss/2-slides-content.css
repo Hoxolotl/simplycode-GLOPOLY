@@ -1,0 +1,112 @@
+.slide-columns {
+	grid-template-columns: 50% 50%;
+}
+.slide-grid {
+	grid-template-columns: 50% 50%;
+	grid-template-rows: 50% 50%;
+}
+.background-highlight {
+	background: var(--highlight-background);
+	color: var(--highlight-color);
+}
+
+.background-support {
+	background: var(--support-background);
+	color: var(--support-color);
+}
+.background-grey {
+	background: var(--grey-background);
+	color: var(--white);
+}
+
+.background-highlight a,
+.background-support a, 
+.background-grey a {
+	color: var(--white);
+}
+.icon {
+	width: auto;
+	margin: 0 auto !important;
+	font-size: 2em !important;
+}
+.center {
+	margin-left: auto;
+	margin-right: auto;
+	max-width:80%;
+}
+.text-center {
+	text-align: center;
+	align-items: center;
+}
+.text-center img {
+	display: inline-block;
+}
+.text-smaller {
+    font-size: smaller;
+}
+img.cover {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	max-width: 1024px;
+}
+img.contain {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	margin: auto auto;
+}
+img.placeholder {
+    background: #eeeeee; /* Old browsers */
+    background: -moz-linear-gradient(top, #eeeeee 0%, #cccccc 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #eeeeee 0%,#cccccc 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #eeeeee 0%,#cccccc 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+.logo {
+	position: absolute;
+	top: 2%;
+	left: 1.5%;
+	z-index: 10;
+    white-space: nowrap;
+    text-decoration: none;
+    color: #666; 
+}
+.logo img {
+    display: inline-block;
+}
+.logo img, img.logo {
+	width:7.5%;
+    color: #c2000b;
+}
+.logo-white, img.logo-white, .logo-white img {
+    color: #fff;
+}
+
+.max50 {
+	max-width: 50%;
+}
+.max25 {
+	max-width: 25%;
+}
+
+.span-row-left {
+	grid-row: 1/-1;
+}
+.span-row-right {
+	grid-row: 1/-1;
+	grid-column: 2;
+}
+.text-middle {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.text-middle > * {
+	margin: 0.25em 0;
+}
+.text-content {
+	padding: 2.2375em;
+}
+.text-content *:first-child {
+	margin-top: 0;
+}

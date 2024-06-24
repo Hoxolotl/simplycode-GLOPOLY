@@ -1,0 +1,14 @@
+<script>
+  document.addEventListener("simply-content-loaded", function() {
+    editor.baseURL = "https://canary.simplyedit.io/1/muze/";
+    editor.baseURLClean = "https://canary.simplyedit.io/1/";
+	editor.editmode.toolbars = [
+		"https://yvo.muze.nl/simply-edit/simply/toolbar.simply-basepack.html",
+		"https://yvo.muze.nl/simply-edit/simply/plugin.simply-scaler.html",
+		"https://yvo.muze.nl/simply-edit/simply/plugin.simply-baseurl.html"
+	];
+});
+  document.addEventListener('simply-editmode', function() {
+    window.location.hash='#simply-edit'
+  })
+</script>

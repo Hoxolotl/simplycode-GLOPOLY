@@ -1,0 +1,170 @@
+<script src="https://cdn.jsdelivr.net/gh/solid-contrib/solid-auth-fetcher/examples/bundle/solid-auth-fetcher.bundle.js"></script>
+<script>
+var solidStorage = (function() {
+  let solidFetch = function(url, options) {
+    return fetch(url, options)
+    .then(response => {
+      if (!response.ok) {
+        switch (response.status) {
+          case 401:
+          case 402:
+          case 403:
+            solidFetch = solidAuthFetcher.fetch
+            return solidFetch(url, options)
+          break
+          default:
+            alert('Failed to '+options.method+' '+url+'. Reason: '+response.status+': '+response.statusText)
+          break
+        }
+      }
+      return response
+    })
+  }
+
+  return {
+    init : function(endpoint) {
+      this.endpoint = endpoint
+      if (!this.endpoint) {
+         this.endpoint = new URL(window.location.pathname, window.location.href);
+         this.endpoint = this.endpoint.href.substring(0, this.endpoint.href.lastIndexOf('/')+1);
+      }
+      this.dataPath = "data.json";
+      this.imagesEndpoint = endpoint + "img/";
+      this.sitemap = editor.storageConnectors.default.sitemap;
+      this.page = editor.storageConnectors.default.page;
+      this.listSitemap = editor.storageConnectors.default.listSitemap;
+      
+      if (editor.responsiveImages) {
+        if (
+          editor.settings['simply-image'] &&
+          editor.settings['simply-image'].responsive
+        ) {
+          if (typeof editor.settings['simply-image'].responsive.sizes === "function") {
+            editor.responsiveImages.sizes = editor.settings['simply-image'].responsive.sizes;
+          } else if (typeof editor.settings['simply-image'].responsive.sizes === "object") {
+            editor.responsiveImages.sizes = (function(sizes) {
+              return function(src) {
+                var result = {};
+                var info = src.split(".");
+                var extension = info.pop().toLowerCase();
+                if (extension === "jpg" || extension === "jpeg" || extension === "png") {
+                  for (var i=0; i<sizes.length; i++) {
+                    result[sizes[i] + "w"] = info.join(".") + "-simply-scaled-" + sizes[i] + "." + extension;
+                  }
+                }
+                return result;
+              };
+            }(editor.settings['simply-image'].responsive.sizes));
+          }
+        }
+        window.addEventListener("resize", editor.responsiveImages.resizeHandler);
+      }
+    },
+    file : {
+      save : function(path, data, callback) {
+        solidFetch(editor.storage.endpoint + path, {
+          method : "PUT",
+          body: data
+        })
+        .then(function(result) {
+          console.log(result);
+          callback({path : path, response: "Saved"});
+        });
+      },
+      delete : function(path, callback) {
+        solidFetch(editor.storage.endpoint + path, {
+          method : "DELETE"
+        })
+        .then(function(result) {
+          console.log(result);
+          callback({});
+        });
+      }
+    },
+    save : function(data, callback) {
+      return editor.storage.file.save(editor.storage.dataPath, data, callback);
+    },
+    load : function(callback) {
+      solidFetch(editor.storage.endpoint + editor.storage.dataPath)
+      .then(function(response) {
+        return response.text();
+      })
+      .then(function(data) {
+        if (data) {
+          callback(data);
+        } else {
+          callback("{}");
+        }
+      })
+      .catch(function(err) {
+        // do something with the error
+        console.log(err);
+        callback("{}");
+      });
+    },
+    list : function(url, callback) {
+      solidFetch(url)
+      .then(function(response) {
+        return response.text();
+      })
+      .then(function(data) {
+        let doc = $rdf.sym(url);
+        let store = $rdf.graph();
+        $rdf.parse(data, store, url, "text/turtle");  // pass base URI      
+        let RDF = $rdf.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+        let LDP = $rdf.Namespace("http://www.w3.org/ns/ldp#");
+        let files = store.each(doc, LDP("contains"));
+        var result = {
+          images : [],
+          folders : [],
+          files : []
+        };
+
+        files.forEach(function(file) {
+          var fileData = {
+            url : file.value,
+            src : file.value,
+            name : file.value.replace(url, '').replace(/\/$/, '')
+          }
+
+          if (store.holds(file, RDF("type"), LDP("Container"))) {
+            result.folders.push(fileData);
+          } else {
+            result.files.push(fileData);
+            if (fileData.url.match(/(jpg|jpeg|gif|png|bmp|tif|svg)$/i)) {
+              result.images.push(fileData);
+            }
+          }
+        });
+        return callback(result);
+      });
+    },
+    connect : async function(callback) {
+      var session = solidAuthFetcher.getSession()
+      .then((session) => {
+        if (session) {
+          this.session = session;
+          return callback();
+        } else {
+          var oidcIssuer = prompt("Enter the URL of your Solid WebID provider:", "https://solid-nextcloud.muze.nl/");
+          if (!oidcIssuer) {
+            return
+          }
+          let url = new URL(location.href)
+          if (url.hash=='#simply-edit') {
+              url.searchParams.set('simply-edit',1)
+          }
+          url.hash='' // not allowed in redirect_uri, so use ?simply-edit instead
+          solidAuthFetcher.login({
+            oidcIssuer: oidcIssuer,
+            redirect: url.href
+          })
+          .then((session) => {
+            this.session = session;
+          });
+        }
+      });
+    }
+  };
+})()
+</script>

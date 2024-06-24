@@ -1,0 +1,34 @@
+<script>
+  const slidesKeyboard = (() => {
+    function keyPrev(event) {
+      if (document.body.hasAttribute('data-simply-edit')) {
+        // don't move slides with keys while in edit mode
+        return;
+      }
+      event.preventDefault()
+      return simplyApp.commands.prevSlide()
+    }
+
+    function keyNext(e) {
+      if (document.body.hasAttribute('data-simply-edit')) {
+        // don't move slides with keys while in edit mode
+        return;
+      }
+      event.preventDefault()
+      return simplyApp.commands.nextSlide()
+    }
+
+    return {
+      default: {
+        PageUp: keyPrev,
+        ArrowUp: keyPrev,
+        ArrowLeft: keyPrev,
+        PageDown: keyNext,
+        ArrowDown: keyNext,
+        ArrowRight: keyNext,
+        Escape: () => { simplyApp.actions.hideHelperMenu() },
+        Space: () => { if (document.body.dataset.simplyEdit) { return; } simplyApp.actions.showHelperMenu() }
+      }
+    }
+  })()
+</script>

@@ -1,0 +1,2215 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!-- Component CSS -->
+    <style>
+      /* about */
+      .about {
+        padding: 0;
+        width: 50%;
+        min-width: 500px;
+        max-width: 100vw;
+        min-height: 400px;
+        max-height: 80vh;
+        grid-template-columns: 50% 50%;
+        box-shadow: var(--ds-shadow-large);
+        border-radius: 10px;
+        border: 0;
+        margin-top: 10vh;
+      }
+      .about[open] {
+        display: grid;
+        z-index: 1000;
+      }
+      dialog::backdrop {
+        background: rgba(0,0,0,0.5);
+      }
+      .about-close {
+        background: white;
+        width: 2em;
+        height: 2em;
+        position: absolute;
+        top: 0em;
+        right: 0em;
+        border-radius: 0 10px 0 10px;
+        cursor: pointer;
+        border: 0;
+        box-shadow: var(--ds-shadow-small);
+      }
+      /* menu */
+      #SimplyPresentButton {
+        background-color: white;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        box-sizing: border-box;
+        box-shadow: 1px 1px 5px #888;
+        position: fixed;
+        z-index: 999998;
+        opacity: 0.5;
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        bottom: 50px;
+        right: 50px;
+        min-height: unset;
+      }
+      #SimplyPresentButton:focus,
+      #SimplyPresentButton:hover {
+        opacity: 1;
+      }
+      body[data-simply-edit] #SimplyPresentButton {
+        display: none;
+      }
+      .simplyPresentLogo {
+        width: 46px;
+        margin-left: 1px;
+      }
+      #SimplyPresentBackdrop {
+        display: none;
+        position: fixed;
+        z-index: 999999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #SimplyPresentState:checked ~ #SimplyPresentBackdrop {
+        display: block;
+      }
+      /* share */
+      .simplypresent-sharing {
+        font-size: 0.6rem;
+        padding: var(--ds-spacing);
+      }
+      /* 0-welcome */
+      .welcome-image {
+        display: flex;
+        padding: 2em;
+        background: #eeeeee; /* Old browsers */
+        background: -moz-linear-gradient(top, #eeeeee 0%, #cccccc 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #eeeeee 0%,#cccccc 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #eeeeee 0%,#cccccc 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      }
+      .slides-present .welcome-slide {
+        display: none;
+      }
+      .slides-present.simply-empty .welcome-slide {
+        display: grid;
+      }
+      /* 1-slides */
+      body {
+      	width: 100%;
+      	height: 100%;
+      	overflow: hidden;
+      }
+      .slides {
+      	font-size: 2.2vw;
+      	line-height: 1.5em;
+      	display: flex;
+      	width: 100vw;
+      	overflow-y: hidden;
+      	overflow-x: scroll;
+      	/* IE10 (touch only) + Edge*/
+      	-ms-scroll-snap-type: mandatory;
+      	/* safari 9 */
+      	-webkit-scroll-snap-points-x: repeat(100vw);
+      	-webkit-overflow-scrolling: touch;
+      	/* firefox */
+      	scroll-snap-destination: 0% 100%;
+      	scroll-snap-points-x: repeat(100vw);
+      	scroll-snap-type: mandatory;
+      	/* standard */
+      	scroll-snap-type: x mandatory;
+      	scroll-behavior: smooth;
+      }
+      .slide {
+      	flex-shrink: 0;
+      	width: 100%;
+      	height: 100vh;
+      	overflow: hidden;
+      	/* standard */
+      	scroll-snap-align: start;
+      	position: relative;
+      	display: grid;
+      	background: var(--white);
+      }
+      /* 2-slides-content */
+      .slide-columns {
+      	grid-template-columns: 50% 50%;
+      }
+      .slide-grid {
+      	grid-template-columns: 50% 50%;
+      	grid-template-rows: 50% 50%;
+      }
+      .background-highlight {
+      	background: var(--highlight-background);
+      	color: var(--highlight-color);
+      }
+      
+      .background-support {
+      	background: var(--support-background);
+      	color: var(--support-color);
+      }
+      .background-grey {
+      	background: var(--grey-background);
+      	color: var(--white);
+      }
+      
+      .background-highlight a,
+      .background-support a, 
+      .background-grey a {
+      	color: var(--white);
+      }
+      .icon {
+      	width: auto;
+      	margin: 0 auto !important;
+      	font-size: 2em !important;
+      }
+      .center {
+      	margin-left: auto;
+      	margin-right: auto;
+      	max-width:80%;
+      }
+      .text-center {
+      	text-align: center;
+      	align-items: center;
+      }
+      .text-center img {
+      	display: inline-block;
+      }
+      .text-smaller {
+          font-size: smaller;
+      }
+      img.cover {
+      	width: 100%;
+      	height: 100%;
+      	object-fit: cover;
+      	max-width: 1024px;
+      }
+      img.contain {
+      	max-width: 100%;
+      	max-height: 100%;
+      	object-fit: contain;
+      	margin: auto auto;
+      }
+      img.placeholder {
+          background: #eeeeee; /* Old browsers */
+          background: -moz-linear-gradient(top, #eeeeee 0%, #cccccc 100%); /* FF3.6-15 */
+          background: -webkit-linear-gradient(top, #eeeeee 0%,#cccccc 100%); /* Chrome10-25,Safari5.1-6 */
+          background: linear-gradient(to bottom, #eeeeee 0%,#cccccc 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      }
+      .logo {
+      	position: absolute;
+      	top: 2%;
+      	left: 1.5%;
+      	z-index: 10;
+          white-space: nowrap;
+          text-decoration: none;
+          color: #666; 
+      }
+      .logo img {
+          display: inline-block;
+      }
+      .logo img, img.logo {
+      	width:7.5%;
+          color: #c2000b;
+      }
+      .logo-white, img.logo-white, .logo-white img {
+          color: #fff;
+      }
+      
+      .max50 {
+      	max-width: 50%;
+      }
+      .max25 {
+      	max-width: 25%;
+      }
+      
+      .span-row-left {
+      	grid-row: 1/-1;
+      }
+      .span-row-right {
+      	grid-row: 1/-1;
+      	grid-column: 2;
+      }
+      .text-middle {
+      	display: flex;
+      	flex-direction: column;
+      	justify-content: center;
+      }
+      .text-middle > * {
+      	margin: 0.25em 0;
+      }
+      .text-content {
+      	padding: 2.2375em;
+      }
+      .text-content *:first-child {
+      	margin-top: 0;
+      }
+      
+      /* 3-portrait */
+      @media (orientation: portrait) {
+      	.slides {
+      		font-size: 3vh;
+      	}
+      	.slide-grid {
+      		grid-template-columns: 100%;
+      		grid-template-rows: 25% 75%;
+      	}
+      	.slide-columns {
+      		grid-template-columns: 100%;
+      		grid-template-rows: 75% 25%;
+      	}
+      	.text-content {
+      		padding: 2em 1em;
+      	}
+      }
+      /* 5-reduced-motion */
+      @media screen and (prefers-reduced-motion: reduce) { 
+      	scroll-behavior: initial;
+      }
+      /* 4. editmode */
+      body[data-simply-edit] {
+      	overflow-y: auto;
+      }
+      .slides-editmode-options {
+        display: none;
+      }
+      .slides.slides-edit {
+        overflow-y: auto;
+        font-size: 1.1vw;
+        display: block;
+        scroll-snap-type: none;
+        overflow-x: auto;
+      }
+      .slide-edit .slides-editmode-options {
+        display: block;
+      }
+      .slides-edit .slide {
+      	height: 50vh;
+      	float: left;
+      	margin: 0 0 0.5% 0.5%;
+      	box-shadow: 2px 2px 5px #888;
+      }
+      .slides-edit .slide-edit {
+        	width: 49%;
+          height: auto;
+      }
+      .slide::before {
+      	margin-top: 24px !important;
+      	right: 24px !important;
+      	padding: 10px !important;
+      	border-radius: 50% !important;
+      	border: 0px !important;
+      }
+      .background-grey[data-simply-field]:focus {
+      	background: var(--grey-background) !important;
+      }
+      .background-highlight[data-simply-field]:focus {
+      	background: var(--highlight-background) !important;
+      }
+      .slide-edit-field {
+        padding: 0.2em;
+      }
+      [data-simply-readonly] {
+        user-select: none;
+        outline: 0 !important;
+      }
+      /* slide-notes-editmode */
+      .slides-edit .slide-notes label {
+        display: block;
+      }
+      .slides-edit .slide-notes textarea {
+        display: block;
+        width: 100%;
+        height: 6em;
+      }
+      /* slide-timer-editmode */
+      .slide-time-edit {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .slide-time-edit input {
+      	margin-left: 1em;
+      }
+      /* speaker-notes */
+      :root {
+        --speaker-notes-font: monospace;
+        --speaker-notes-font-size: 1.5em;
+        --speaker-notes-padding: 0.5em;
+      }
+      .slides-speaker-notes {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        font-family: var(--speaker-notes-font);
+        font-size: var(--speaker-notes-font-size);
+        overflow-y: hidden;
+      }
+      .slides-speaker-note {
+        height: 100%;
+        width: 100%;
+        padding: var(--speaker-notes-padding);
+        overflow: auto;
+      }
+      /* default */
+      @import url('https://fonts.googleapis.com/css?family=Alegreya+Sans:400,400i,700,700i');
+      
+      :root {
+      	--highlight-dark: #009c55;
+      	--highlight-light: #00d455;
+      	--highlight-color: #fff;
+      	--highlight-background: linear-gradient( to bottom, var(--highlight-light), var(--highlight-dark) );
+      
+      	--support-dark: #2ba3b0;
+      	--support-light: #4fb7c2;
+      	--support-color: #fff;
+      	--support-background: linear-gradient( to bottom, var(--support-light), var(--support-dark) );
+      
+      	--grey-dark: #38393c;
+      	--grey-medium: #7f8185;
+      	--grey-light: #e9ebec;
+      	--grey-dark: #38393c;
+      	--black: #000;
+      	--white: #fff;
+      	--grey-background: var(--grey-dark);
+      
+      	--font-family: 'Alegreya Sans', sans-serif;
+      	--font-size: 20px;
+      	--line-height: 1.5em;
+      	--color: #7f8185;
+      	--background: #fff;
+      }
+      
+      /* general styling on default elements */
+      
+      html, body {
+      	margin: 0;
+      	padding: 0;
+      	font-family: var(--font-family);
+      	font-size: var(--font-size);
+      	line-height: var(--line-height);
+      	color: var(--color); 
+      	background-color: var(--background);
+      }
+      
+      h1 {
+      	font-size: 2.4em;
+      	font-weight: 300;
+      	line-height: 1.1em;
+      	margin: 0.5em 0;
+      }
+      
+      h2 {
+      	font-size: 1.6em;
+      	font-weight: 400;
+      	line-height: 1.1em;
+      	margin: 0.5em 0;
+      }
+      
+      * {
+      	box-sizing: border-box;
+      }
+      
+      img {
+      	display: block;
+      	max-width: 100%;
+      }
+      
+      /* custom styling for custom elements */
+      
+      .button {
+      	padding: 0.5em 0.75em;
+      	margin: 0.625em;
+      	background: var(--support-background);
+      	color: var(--support-color);
+          text-decoration: none;
+          border-radius: 5px;
+      }
+      .button:first-child {
+      	margin-left: 0;
+      }
+      .button:last-child {
+      	margin-right: 0;
+      }
+      .button.highlight {
+      	background: var(--highlight-background);
+      	color: var(--highlight-color);
+      }
+      /* image-styles */
+      img.contain {
+        object-fit: contain;
+      }
+      img.cover {
+        object-fit: cover;
+      }
+      img.actual {
+        object-fit: none;
+      }
+      /* timer */
+      :root {
+        	--timer-border-size: 3px;
+          --timer-border-radius: 3px;
+          --timer-border-color: var(--support-dark);
+        	--timer-box-padding: 0.5em;
+          --timer-current-color: var(--support-light);
+          --timer-cursor-color: #777;
+          --timer-cursor-width: 4px;
+          --timer-padding: 0.5em;
+          --timer-bar-color: var(--grey-light);
+          --timer-cursor-marker-size: 10px;
+      }
+      .hidden {
+      	display: none;
+      }
+      .slides-timer {
+          padding: var(--timer-padding);
+          position: relative;
+      }
+      .slides-timer-slides {
+      	border: var(--timer-border-size) solid var(--timer-border-color);
+          box-sizing: border-block;
+          padding: var(--timer-box-padding);
+          display: flex;
+      	width: 100%;
+      	list-style: none;
+      	margin: 0;
+      	margin-top: 1em;
+          gap: 2px;
+          border-radius: var(--timer-border-radius);
+      }
+      .slides-timer-slides.simply-empty:before {
+        content: '';
+        height: 2em;  
+      }
+      .slides-timer-slide {
+      	display: block;
+      	padding: 0;
+      	background-color: var(--timer-bar-color);
+      	height: 2em;
+      	flex: 1;
+      }
+      .slides-timer-slide.slides-timer-current {
+      	background-color: var(--timer-current-color);
+      }
+      .slides-timer-time span {
+      	display: block;
+      	appearance: none;
+      	border: 0;
+      	font-size: 2em;
+      	text-align:right;
+      	width: 6em;
+        	color: black;
+      }
+      .slides-timer-time.total-time {
+      	position: absolute;
+      	top: var(--timer-padding);
+      	right: var(--timer-padding);
+      	text-align:right;
+      }
+      .slides-timer-time.slide-time {
+      	right: auto;
+      	left: var(--timer-padding);
+      	text-align:left;
+      }
+      .slides-timer-time.slide-time span {
+      	text-align:left;
+      }
+      .slides-timer-cursor {
+      	position: absolute;
+      	height: 2em;
+      	margin-top: calc(-2em - var(--timer-border-size) - var(--timer-box-padding));
+          width: var(--timer-cursor-width);
+          background-color: var(--timer-cursor-color);
+      	margin-left: calc(var(--timer-padding) + var(--timer-box-padding) + var(--timer-border-size));
+      	z-index:10;
+          transition: left 1s;
+      }
+      .slides-timer-cursor::before {
+          content: "";
+          display: block;
+          position: absolute;
+          width: 0;
+          height: calc(2em - 4px);
+          top: 0;
+        	border: var(--timer-cursor-marker-size) solid var(--timer-cursor-color);
+      	border-right-color: transparent;
+      	border-left-color: transparent;
+          margin-left: calc(2px - var(--timer-cursor-marker-size));
+      	margin-top: calc(2px - var(--timer-cursor-marker-size));
+      }
+      
+      
+    </style>
+    <!-- /Component CSS -->
+    <!-- Page CSS -->
+    <style>
+      /* present */
+      .slides-presentor {
+        display: grid;
+        grid-template-columns: 33.333vw 33.333vw 33.333vw;
+        grid-template-rows: 33.333vh 33.333vh 33.333vh;
+        background-color: #eee;
+        gap: 1px;
+      }
+      .slides-presentor > div {
+        background-color: white;
+        overflow: hidden;
+        position: relative;
+      }
+      .slides-presentor .left-main {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+      }
+      .slides-presentor .left-main > * {
+        transform: scale(0.66666);
+        transform-origin: top left;
+      }
+      .slides-presentor .left-bottom {
+        grid-column: 1 / 3;
+        grid-row: 3;
+      }
+      .slides-presentor .right-top {
+        grid-column: 3;
+        grid-row: 1;
+      }
+      .slides-presentor .right-top > * {
+        transform: scale(0.333);
+        transform-origin: top left;
+      }
+      
+      .slides-presentor .right-center {
+        grid-column: 3;
+        grid-row: 2;
+      }
+      .slides-presentor .right-bottom {
+        grid-column: 3;
+        grid-row: 3;
+      }
+    </style>
+    <!-- /Page CSS -->
+    <!-- Head HTML -->
+    <!-- ds-css -->
+    <style>
+    :root {
+        --ds-spacing: 1em;
+        --ds-font-size: calc(1.25 * 1rem);
+        --ds-font-weight: 300;
+        --ds-line-height: calc(1.6 * var(--ds-font-size));
+        --ds-input-border: var(--grey-light);
+        --ds-input-spacing: var(--ds-spacing);
+        --ds-button-spacing: calc(0.5 * var(--ds-input-spacing));
+        --ds-button-bg-color: var(--grey-light);
+        --ds-button-default-bg-color: var(--ds-white);
+        --ds-button-border-color: var(--grey-light);
+        --ds-button-disabled-color: var(--grey-medium);
+        --ds-button-disabled-bg-color: var(--ds-white);
+        --ds-button-primary-bg-color: var(--primary);
+        --ds-button-primary-color: var(--primary-contrast);
+        --ds-button-primary-border-color: var(--primary);
+        --ds-button-line-height: calc(var(--ds-line-height) * 1);
+        --ds-button-shadow: var(--ds-shadow-tiny);
+        --ds-button-shadow-hover: var(--ds-shadow-small);
+        --ds-button-radius: 3px;
+       --ds-dropdown-background: white;
+        --ds-dropdown-width: 200px;
+        --ds-shadow-light: rgba(0,0,0,0.07);
+        --ds-shadow-middle: rgba(0,0,0,0.09);
+        --ds-shadow-dark: rgba(0,0,0,0.11);
+        --ds-shadow-tiny: 
+            0 1px 1px var(--ds-shadow-dark)
+        ;
+        --ds-shadow-small: 
+            0 1px 1px var(--ds-shadow-dark),
+            0 2px 2px var(--ds-shadow-middle),
+            0 4px 4px var(--ds-shadow-light)
+        ;
+        --ds-shadow-medium: 
+            0 1px 1px var(--ds-shadow-middle),
+            0 2px 2px var(--ds-shadow-middle),
+            0 4px 4px var(--ds-shadow-middle),
+            0 6px 8px var(--ds-shadow-middle),
+            0 8px 16px var(--ds-shadow-middle)
+        ;
+        --ds-shadow-large: 
+            0 2px 1px var(--ds-shadow-light),
+            0 4px 2px var(--ds-shadow-light),
+            0 8px 4px var(--ds-shadow-light),
+            0 16px 8px var(--ds-shadow-light),
+            0 32px 16px var(--ds-shadow-light) 
+        ;
+        --ds-box-radius: 3px;
+    
+    }
+    :root .ds-button {
+        line-height: var(--ds-button-line-height);
+        min-height: var(--ds-button-line-height);
+    }
+    .ds-button {
+        margin: 0 var(--ds-button-spacing) var(--ds-button-spacing) 0;
+        overflow: visible;
+        font: inherit;
+        color: inherit;
+        display: inline-block;
+        box-sizing: border-box;
+        padding: 0 calc(0.5 * var(--ds-line-height));
+        vertical-align: middle;
+        font-size: calc(0.875 * var(--ds-font-size));
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+        background-color: var(--ds-button-bg-color);
+        outline: 1px solid var(--ds-button-border-color);
+        border: 0;
+        white-space: nowrap;
+        box-shadow: var(--ds-button-shadow);
+        border-radius: var(--ds-button-radius);
+    }
+    .ds-button::-moz-focus-inner {
+        border: 0;
+    }
+    .ds-button:hover,
+    .ds-button:focus {
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: var(--ds-button-shadow-hover);
+    }
+    a.ds-button,
+    a.ds-button:hover,
+    a.ds-button:active,
+    a.ds-button:visited {
+        color: inherit;
+    }
+    .ds-button-default {
+        background-color: var(--ds-button-default-bg-color);
+    }
+    a.ds-button-primary, a.ds-button-primary:hover,
+    a.ds-button-primary:active, a.ds-button-primary:visited,
+    .ds-button-primary, .ds-button-primary:hover {
+        background-color: var(--ds-button-primary-bg-color);
+        color: var(--ds-button-primary-color);
+        border-color: var(--ds-button-primary-border-color);
+    }
+    a.ds-button-support, a.ds-button-support:hover,
+    a.ds-button-support:active, a.ds-button-support:visited,
+    .ds-button-support, .ds-button-support:hover {
+        background-color: var(--ds-button-support-bg-color);
+        color: var(--ds-button-support-color);
+        border-color: var(--ds-button-support-border-color);
+    }
+    .ds-button:disabled {
+        background-color: var(--ds-button-disabled-bg-color);
+        color: var(--ds-button-disabled-color);
+    }
+    .ds-button:disabled:hover {
+        cursor: not-allowed;
+        box-shadow: 0 0 0;
+    }
+    .ds-button-group {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .ds-button-light {
+        background: none;
+        outline: 0;
+        padding: 0;
+    }
+    .ds-button-naked {
+        background: none;
+        outline: 0;
+    }
+    .ds-button-close {
+        position: absolute;
+        right: var(--ds-spacing);
+        margin: 0;
+    }
+    
+    .ds-button-grow {
+        display: block;
+        width: 100%;
+    }
+    .ds-icon {
+        display: inline-block;
+        height: var(--ds-line-height);
+        width: 1em;
+        vertical-align: bottom;
+    }
+    .ds-button .ds-icon {
+        height: var(--ds-button-line-height);
+    }
+    
+    .ds-button-bar .ds-button:not(:last-child):not(:only-child) {
+        margin-right: 0;
+        border-right: 0;
+    }
+    .ds-box {
+        background: var(--ds-dropdown-background);
+        box-shadow: var(--ds-shadow-medium);
+        border-radius: var(--ds-box-radius);
+    }
+    .ds-box {
+      position: relative;
+    }
+    .ds-box-close {
+      position: absolute;
+      display: block;
+      top: 0;
+      right: 0;
+      margin: 0;
+      font-size: 2em;
+      padding: 0;
+      cursor: pointer;
+    }
+    .ds-box-close:focus,
+    .ds-box-close:hover {
+      background-color: var(--grey-light);
+    }
+    .ds-dropdown {
+        margin: 0;
+        padding: 0;
+        outline: none;
+        box-shadow: none;
+    }
+    .ds-dropdown-nav {
+        width: var(--ds-dropdown-width);
+        background: var(--ds-dropdown-background);
+        display: none;
+        position: absolute;
+        box-shadow: var(--ds-shadow-medium);
+        border-radius: var(--ds-box-radius);
+        bottom: 100px;
+        right: 60px;
+        padding: 0;
+        z-index: 1000000;
+    }
+    .ds-dropdown-nav::before {
+        content: "";
+        display: block;
+        width: 0.5rem; 
+        height: 0.5rem;
+        background: var(--ds-dropdown-background);
+        position: absolute;
+        clip-path: polygon(-2px 0.6rem, -2px -2px, 0.6rem -2px);
+        right: 0.5rem;
+        transform: rotate(-135deg);
+        bottom: -0.2rem;
+        filter: drop-shadow(1px 1px 2px #000);
+    }
+    .ds-dropdown-state {
+        display: none;  
+    }
+    .ds-dropdown-state:checked ~ .ds-dropdown-nav {
+        display: block;
+    }
+    .ds-dropdown-list {
+        list-style: none;
+        margin: 0;
+        padding: calc(0.5 * var(--ds-spacing)) 0;
+    }
+    .ds-dropdown-list li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .ds-dropdown-item {
+        margin: 0;
+        padding: 0 calc(0.75 * var(--ds-spacing));
+        cursor: pointer;
+        display: block;
+    }
+    .ds-dropdown-item:focus,
+    .ds-dropdown-item:hover {
+        color: var(--highlight-dark);
+        background-color: var(--grey-light);
+    }
+    .ds-dropdown-divider,
+    .ds-dropdown-list .ds-dropdown-divider {
+        border-top: 1px solid #666;
+        border-bottom: 1px solid #eee;
+        margin: calc(0.25 * var(--ds-spacing)) 0;
+    }
+    .ds-backdrop {
+        position: fixed;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .ds-backdrop.visible {
+        z-index: 101;
+    }
+    .ds-dialog {
+      visibility: hidden;
+      z-index: -1;
+      transform: scale(.7);
+      opacity: 0;
+      transition: all .3s,z-index .3s step-end;
+    }
+    .ds-dialog.visible,
+    .visible > .ds-dialog {
+      visibility: visible;
+      transform: scale(1);
+      opacity: 1;
+      z-index: 101;
+      transition: all .3s,z-index .3s step-start;
+    }
+    .ds-dialog-container {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+    .ds-center {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .ds-center-middle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    </style>
+    <!-- portrait-mode -->
+    <style>
+      @media (orientation: portrait) {
+        .slides {
+          font-size: 3vh;
+        }
+        .slide-grid {
+          grid-template-columns: 100%;
+          grid-template-rows: 25% 75%;
+        }
+        .slide-columns {
+          grid-template-columns: 100%;
+          grid-template-rows: 75% 25%;
+        }
+        .text-content {
+          padding: 2em 1em;
+        }
+      }
+    </style>
+    <!-- reduced-motion -->
+    <style>
+      @media screen and (prefers-reduced-motion: reduce) { 
+        scroll-behavior: initial;
+      }
+    </style>
+    <!-- solid -->
+    <script src="https://cdn.jsdelivr.net/gh/solid-contrib/solid-auth-fetcher/examples/bundle/solid-auth-fetcher.bundle.js"></script>
+    <script>
+    var solidStorage = (function() {
+      let solidFetch = function(url, options) {
+        return fetch(url, options)
+        .then(response => {
+          if (!response.ok) {
+            switch (response.status) {
+              case 401:
+              case 402:
+              case 403:
+                solidFetch = solidAuthFetcher.fetch
+                return solidFetch(url, options)
+              break
+              default:
+                alert('Failed to '+options.method+' '+url+'. Reason: '+response.status+': '+response.statusText)
+              break
+            }
+          }
+          return response
+        })
+      }
+    
+      return {
+        init : function(endpoint) {
+          this.endpoint = endpoint
+          if (!this.endpoint) {
+             this.endpoint = new URL(window.location.pathname, window.location.href);
+             this.endpoint = this.endpoint.href.substring(0, this.endpoint.href.lastIndexOf('/')+1);
+          }
+          this.dataPath = "data.json";
+          this.imagesEndpoint = endpoint + "img/";
+          this.sitemap = editor.storageConnectors.default.sitemap;
+          this.page = editor.storageConnectors.default.page;
+          this.listSitemap = editor.storageConnectors.default.listSitemap;
+          
+          if (editor.responsiveImages) {
+            if (
+              editor.settings['simply-image'] &&
+              editor.settings['simply-image'].responsive
+            ) {
+              if (typeof editor.settings['simply-image'].responsive.sizes === "function") {
+                editor.responsiveImages.sizes = editor.settings['simply-image'].responsive.sizes;
+              } else if (typeof editor.settings['simply-image'].responsive.sizes === "object") {
+                editor.responsiveImages.sizes = (function(sizes) {
+                  return function(src) {
+                    var result = {};
+                    var info = src.split(".");
+                    var extension = info.pop().toLowerCase();
+                    if (extension === "jpg" || extension === "jpeg" || extension === "png") {
+                      for (var i=0; i<sizes.length; i++) {
+                        result[sizes[i] + "w"] = info.join(".") + "-simply-scaled-" + sizes[i] + "." + extension;
+                      }
+                    }
+                    return result;
+                  };
+                }(editor.settings['simply-image'].responsive.sizes));
+              }
+            }
+            window.addEventListener("resize", editor.responsiveImages.resizeHandler);
+          }
+        },
+        file : {
+          save : function(path, data, callback) {
+            solidFetch(editor.storage.endpoint + path, {
+              method : "PUT",
+              body: data
+            })
+            .then(function(result) {
+              console.log(result);
+              callback({path : path, response: "Saved"});
+            });
+          },
+          delete : function(path, callback) {
+            solidFetch(editor.storage.endpoint + path, {
+              method : "DELETE"
+            })
+            .then(function(result) {
+              console.log(result);
+              callback({});
+            });
+          }
+        },
+        save : function(data, callback) {
+          return editor.storage.file.save(editor.storage.dataPath, data, callback);
+        },
+        load : function(callback) {
+          solidFetch(editor.storage.endpoint + editor.storage.dataPath)
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(data) {
+            if (data) {
+              callback(data);
+            } else {
+              callback("{}");
+            }
+          })
+          .catch(function(err) {
+            // do something with the error
+            console.log(err);
+            callback("{}");
+          });
+        },
+        list : function(url, callback) {
+          solidFetch(url)
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(data) {
+            let doc = $rdf.sym(url);
+            let store = $rdf.graph();
+            $rdf.parse(data, store, url, "text/turtle");  // pass base URI      
+            let RDF = $rdf.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+            let LDP = $rdf.Namespace("http://www.w3.org/ns/ldp#");
+            let files = store.each(doc, LDP("contains"));
+            var result = {
+              images : [],
+              folders : [],
+              files : []
+            };
+    
+            files.forEach(function(file) {
+              var fileData = {
+                url : file.value,
+                src : file.value,
+                name : file.value.replace(url, '').replace(/\/$/, '')
+              }
+    
+              if (store.holds(file, RDF("type"), LDP("Container"))) {
+                result.folders.push(fileData);
+              } else {
+                result.files.push(fileData);
+                if (fileData.url.match(/(jpg|jpeg|gif|png|bmp|tif|svg)$/i)) {
+                  result.images.push(fileData);
+                }
+              }
+            });
+            return callback(result);
+          });
+        },
+        connect : async function(callback) {
+          var session = solidAuthFetcher.getSession()
+          .then((session) => {
+            if (session) {
+              this.session = session;
+              return callback();
+            } else {
+              var oidcIssuer = prompt("Enter the URL of your Solid WebID provider:", "https://solid-nextcloud.muze.nl/");
+              if (!oidcIssuer) {
+                return
+              }
+              let url = new URL(location.href)
+              if (url.hash=='#simply-edit') {
+                  url.searchParams.set('simply-edit',1)
+              }
+              url.hash='' // not allowed in redirect_uri, so use ?simply-edit instead
+              solidAuthFetcher.login({
+                oidcIssuer: oidcIssuer,
+                redirect: url.href
+              })
+              .then((session) => {
+                this.session = session;
+              });
+            }
+          });
+        }
+      };
+    })()
+    </script>
+    <!-- /Head HTML -->
+    <script>
+      var simplyDataApi = {};
+      var simplyApp = {};
+      window.addEventListener("simply-content-loaded", function() {
+        simply.bind = false;
+        /* Raw API */
+        var simplyRawApi = {
+          
+        };
+        /* End of Raw API */
+        /* Data API */
+        simplyDataApi = {
+          
+        };
+        /* End of Data API */
+        simplyApp = simply.app({
+          /* Actions */
+          actions: {
+            "hhsAddSlideChangeListener" : function() {
+              document.addEventListener("simply-data-changed", function(event) {
+                if (
+                  (event.data.dataBinding.parentKey == "/") && 
+                  (
+                    (event.data.dataBinding.key == "slide") || 
+                    (event.data.dataBinding.key == "timerStarted") ||
+                    (event.data.dataBinding.key == "isTimerPaused")
+                  )
+                ) {
+                  if (editor.pageData.hhsCreator) {
+                    simplyHHS.ds.setValue(JSON.stringify({
+                      timerStarted : editor.pageData.timerStarted,
+                      isTimerPaused : editor.pageData.isTimerPaused,
+                      slide : editor.pageData.slide
+                    }))
+                  }
+                }
+              })
+            },
+            "hhsConnectSpace" : async function(words) {
+              simplyApp.actions.hhsAddSlideChangeListener()
+              let resources = await simplyHHS.init()
+              let space = HHS.Space.fromWordCode(words, resources) // replace 3 words;
+              let ds = await space.getEntryPoint()
+              simplyHHS.ds = ds
+              ds.setResources(resources)
+              await resources.store.save(ds)
+              await ds.startSync()
+              ds.addSyncCallback((newState) => {
+                this.app.actions.hhsUpdateSpace(ds)
+                ds.contents.addMutationOpCallback(() => {
+                  this.app.actions.hhsUpdateSpace(ds)
+                })
+              })
+              this.app.actions.hhsUpdateSpace(ds)
+              return ds
+            },
+            "hhsCreateSpace" : async function() {
+              let resources = await simplyHHS.init()
+              let ds = new simplyHHS.DocumentSpace()
+              let space = HHS.Space.fromEntryPoint(ds, resources)
+              await space.entryPoint
+              editor.pageData.hhsWords = await space.getWordCoding()
+              editor.pageData.hhsCreator = editor.pageData.hhsWords
+              ds = await space.getEntryPoint()
+              ds.setResources(resources)
+              ds.startSync()
+              // await this.app.actions.hhsConnectSpace(editor.pageData.hhsWords)
+              simplyApp.actions.hhsAddSlideChangeListener()
+              simplyHHS.ds = ds
+              simplyHHS.ds.setValue(JSON.stringify({
+                timerStarted : editor.pageData.timerStarted,
+                isTimerPaused : editor.pageData.isTimerPaused,
+                slide : editor.pageData.slide
+              }))
+            
+              console.log(document.location.origin + document.location.pathname + "#words/" + editor.pageData.hhsWords.join("/"))
+              return editor.pageData.hhsWords
+            },
+            "hhsUpdateSpace" : async function(ds) {
+              let data = ds.getValue()
+              if (data) {
+                data = JSON.parse(data)
+                if (data['slide'] && !editor.pageData.hhsCreator) {
+                  this.app.actions.gotoSlide(data['slide'])
+                }
+                if (data['timerStarted'] && !editor.pageData.hhsCreator) {
+                  editor.pageData['timerStarted'] = data['timerStarted']
+                }
+                if (data['isTimerPaused'] && !editor.pageData.hhsCreator) {
+                  editor.pageData['isTimerPaused'] = data['isTimerPaused']
+                }
+              }
+            },
+            "start" : async function() {
+              this.app.started = true
+              this.app.keyboard = simply.keyboard(this.app, slidesKeyboard)
+              this.app.view.slidesTotal = 10
+              await this.call('initMenu')
+              await this.call('initSlides')
+            },
+            "hideHelper" : async function() {
+              var helper = document.getElementById('SimplyPresentButton')
+              if (helper) {
+                helper.style.visibility = 'hidden'
+                helper.classList.remove('simply-visible')
+              }
+            },
+            "hideHelperMenu" : async function() {
+              document.getElementById('SimplyPresentState').checked = false
+            },
+            "initMenu" : async function() {
+              var checkHelper = function() {
+                if ( location.hash == '#simply-edit' || location.hash == '#present') {
+                  simplyApp.actions.hideHelper()
+                } 
+              }
+              window.addEventListener('hashchange', checkHelper)
+              checkHelper()
+            },
+            "showHelper" : async function() {
+              var helper = document.getElementById('SimplyPresentButton')
+              if (helper) { 
+                helper.style.visibility = 'visible'
+                helper.classList.add('simply-visible')
+              }
+            },
+            "showHelperMenu" : async function() {
+              document.getElementById('SimplyPresentState').checked = true
+            },
+            "setNextSlide" : async function() {
+              let nextSlidePreview = document.querySelector('.slides.slides-next');
+              if (nextSlidePreview) {
+                let currentSlide = nextSlidePreview.querySelector('.slide:nth-child('+(parseInt(editor.pageData.slide))+')')
+                let nextSlide = nextSlidePreview.querySelector('.slide:nth-child('+(parseInt(editor.pageData.slide)+1)+')')
+                if (nextSlide) {
+                  nextSlide.scrollIntoView()
+                } else {
+                  currentSlide.scrollIntoView() // we are at the last slide so we have no 'next' to show.
+                }
+              }
+            },
+            "share" : async function() {
+              this.app.actions.hhsCreateSpace()
+            },
+            "gotoSlide" : async function(slide) {
+              slide = parseInt(slide)
+              if (slide===editor.pageData.slide) {
+            	return
+              }
+              editor.pageData.slide = slide // also triggers an update to HHS state;
+              simplyApp.actions.setSlide()
+              simplyApp.actions.setNextSlide()
+              simplyApp.actions.setWindowHash()
+              simplyApp.actions.setTimerSlide()
+              simplyApp.actions.setSpeakerNotesSlide()
+              return true
+            },
+            "initSlides" : async function() {
+              function isScrolledIntoView(el) {
+                var rect = el.getBoundingClientRect()
+                var parentRect = el.parentNode.getBoundingClientRect()
+                return (rect.left >= parentRect.left) && (rect.right <= parentRect.right)
+              }
+            
+              function throttle( callbackFunction, intervalTime ) {
+                var eventId = 0
+                return function() {
+                  var myArguments = arguments;
+                  var me = this;
+                  if ( eventId ) {
+                    return
+                  } else {
+                    eventId = window.setTimeout( function() {
+                      callbackFunction.apply(me, myArguments)
+                      eventId = 0
+                    }, intervalTime )
+                  }
+                }
+              }
+            
+              if (editor.pageData.slide) {
+                editor.pageData.slide = parseInt(editor.pageData.slide)
+              }
+              let slideQuery = '.slides-present .slide:not(.welcome-slide)'
+              var slides = document.body.querySelectorAll(slideQuery)
+              var count = 1
+              var hash = window.location.hash.substr(1)
+              slides.forEach(function(slide) {
+                slide.id='slide-'+count
+            	slide.slide = count
+                count++
+                if (hash == slide.id) {
+                  slide.scrollIntoView()
+                }
+              })
+            
+              window.addEventListener('scroll', throttle(
+                function() {
+                  var slides = document.body.querySelectorAll(slideQuery)
+                  for (var i=0, l=slides.length; i<l; i++) {
+                    if (isScrolledIntoView(slides.item(i))) {
+                      // history.replaceState({}, '', '#'+slides.item(i).id)
+                      simplyApp.actions.gotoSlide(slides.item(i).slide)
+                      return
+                    }
+                  }
+                }, 
+                500
+              ), true)
+            },
+            "setSlide" : function() {
+              let slides = document.querySelector('.slides-present')
+              if (slides) {
+                slide  = Math.max(1, Math.min(editor.pageData.slide, slides.querySelectorAll('.slide').length))
+                slides.scrollLeft = document.getElementById('slide-'+slide).offsetLeft
+              }
+            },
+            "setWindowHash" : function() {
+              // FIXME: Should we set it differently for different page types?
+              if (editor.pageData.page == "slides") {
+                window.location.hash='#slide/'+editor.pageData.slide
+              }
+            },
+            "setSpeakerNotesSlide" : function() {
+              document.querySelectorAll(".slides-speaker-notes-current").forEach(function(element) {
+                element.classList.remove("slides-speaker-notes-current")
+              })
+              let newSlide = document.querySelector(".slides-speaker-note:nth-child(" + editor.pageData.slide + ")")
+              if (newSlide) {
+                newSlide.classList.add("slides-speaker-notes-current")
+                newSlide.scrollIntoView()
+              }
+            },
+            "pauseTimer" : async function() {
+              editor.pageData.isTimerPaused = true
+            },
+            "setTimerSlide" : function() {
+              simplyApp.actions.startTimer()
+              document.querySelectorAll(".slides-timer-current").forEach(function(element) {
+                element.classList.remove("slides-timer-current")
+              })
+              let newSlide = document.querySelector(".slides-timer-slide:nth-child(" + editor.pageData.slide + ")")
+              if (newSlide) {
+                newSlide.classList.add("slides-timer-current")
+              }
+            },
+            "startTimer" : async function() {
+              if (!editor.pageData['timerStarted']) {
+                editor.pageData['timerStarted'] = new Date().toJSON()
+              }
+              if (!editor.pageData.timerInterval) {
+                editor.pageData['timerPauseDuration'] = 0
+                editor.pageData.timerInterval = window.setInterval(simplyApp.actions.timerInterval, 1000)
+              } else if (editor.pageData.isTimerPaused) {
+                editor.pageData.isTimerPaused = false
+              }
+            },
+            "stopTimer" : async function() {
+              if (editor.pageData.timerInterval) {
+                clearInterval(editor.pageData.timerInterval)
+                editor.pageData.timerInterval = null
+              }
+            },
+            "timerInterval" : function() {
+              if (editor.pageData.isTimerPaused) {
+                editor.pageData['timerPauseDuration']++
+              }
+              let timeNow = new Date()
+              let timeStarted = new Date(editor.pageData['timerStarted'])
+              let timeSpent = parseInt((timeNow - timeStarted) / 1000) // javascript has ms times
+              timeSpent -= parseInt(editor.pageData.timerPauseDuration)
+            
+              let timePerSlide = parseInt(editor.pageData.totalTime / editor.pageData.slides.length)
+              let slidesElapsed = 0
+              editor.pageData.slides.forEach(function(entry, index) {
+                if (index < (editor.pageData.slide)) {
+                  slidesElapsed += timePerSlide
+                }
+              })
+              editor.pageData['total-time-left'] = editor.pageData.totalTime - timeSpent
+              editor.pageData['slide-time-left'] = slidesElapsed - timeSpent
+            }
+          },
+          /* /Actions */
+          /* Commands */
+          commands: {
+            "share" : function(el) {
+              simplyApp.actions.hhsCreateSpace()
+            },
+            "startPresentation" : async function(el, value) {
+            	try {
+            		let connection = await simplyPresentRequest.start()
+            	} catch(e) {
+            		// ignore
+            	}
+            },
+            "aboutClose" : function(el) {
+              el.closest('dialog').close();
+            },
+            "aboutOpen" : function() {
+              document.querySelector('dialog.about').showModal();
+            },
+            "edit" : async function() {
+              window.location.hash='simply-edit'
+              this.app.actions.hideHelperMenu()
+            },
+            "hideMenu" : async function() {
+              this.app.actions.hideHelperMenu()
+            },
+            "present" : async function() {
+              document.location.hash = "#present"
+            /*
+            if (simplyPresentConnection) {
+                simplyPresentConnection.terminate();
+                simplyPresentConnection = null
+                document.body.removeAttribute('data-simply-present')
+              } else {
+                let connection = await simplyPresentRequest.start()
+                simplyPresentConnection = connection
+                document.body.setAttribute('data-simply-present',true)
+              }
+            */
+              this.app.actions.hideHelperMenu()
+            },
+            "showMenu" : async function() {
+              this.app.actions.showHelperMenu()
+            },
+            "copyLink" : function(el) {
+              let slidesLink = el.href
+              navigator.clipboard.writeText(slidesLink)
+              alert("The link is now in your clipboard!")
+            },
+            "share" : function(el) {
+              this.app.actions.share()
+            },
+            "nextSlide" : async function() {
+              let max = editor.pageData.slides.length
+              slide = Math.min(max, editor.pageData.slide + 1)
+              return simplyApp.actions.gotoSlide(slide)
+            },
+            "prevSlide" : async function() {
+              slide = Math.max(1, editor.pageData.slide - 1)
+              return simplyApp.actions.gotoSlide(slide)
+            },
+            "resetTime" : function(el) {
+              el.parentElement.querySelector("input").value=""
+            },
+            "pauseTimer" : async function() {
+              return this.actions.pauseTimer()
+            },
+            "startTimer" : async function() {
+              return this.actions.startTime()
+            },
+            "stopTimer" : async function() {
+              return this.actions.stopTimer()
+            }
+          },
+          /* /Commands */
+          /* Routes */
+          routes: {
+            "#words/:word1/:word2/:word3/:nextHash" : async function(params) {
+              await simplyApp.actions.start()
+              await simplyApp.actions.hhsConnectSpace([params.word1, params.word2, params.word3])
+              document.location.hash=params.nextHash
+            },
+            "#words/:word1/:word2/:word3" : async function(params) {
+              await simplyApp.actions.start()
+              simplyApp.actions.hhsConnectSpace([params.word1, params.word2, params.word3])
+              editor.pageData.page = 'slides'
+              simplyApp.actions.initSlides() 
+            },
+            "#slide/:slide/" : async function(params) {
+            	editor.pageData.page = 'slides'
+                if (!simplyApp.started) {
+                    await simplyApp.actions.start()
+                }
+                if (!params.slide) {
+            		params.slide=1;
+                }
+                simplyApp.actions.gotoSlide(parseInt(params.slide))
+            },
+            "#share" : function(params) {
+              simplyApp.actions.share()
+            },
+            "#next-slide" : async function(params) {
+              editor.pageData.page = 'next-slide'
+              await simplyApp.actions.start()
+              simplyApp.actions.gotoSlide(1)
+            },
+            "#present" : async function(params) {
+              editor.pageData.page = "present"
+              editor.pageData.hhsWords = [];
+              await simplyApp.actions.start()
+              simplyApp.actions.gotoSlide(1)
+            },
+            "#slides" : async function(params) {
+              editor.pageData.page='slides'
+              await simplyApp.actions.start()
+            },
+            "#simply-edit" : function(params) {
+              editor.pageData.page = "slides-editmode"
+            },
+            "#speaker-notes" : async function(params) {
+              editor.pageData.page = 'speaker-notes'
+              await simplyApp.actions.start()
+            },
+            "#timer" : async function(params) {
+              editor.pageData.page = 'timer'
+              await simplyApp.actions.start()
+            }
+          }
+          /* /Routes */
+        });
+      });
+      function clone(ob) {
+        return JSON.parse(JSON.stringify(ob));
+      }
+      function updateDataSource(name) {
+        document.querySelectorAll('[data-simply-data="'+name+'"]').forEach(function(list) {
+          editor.list.applyDataSource(list, name);
+          list.dataBindingPaused = 0;
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Body HTML -->
+    
+    <!-- /Body HTML -->
+    <!-- Component HTML templates -->
+    <template id="about">
+      <dialog class="about">
+      <div class="about-left text-content text-smaller">
+        <h1>About</h1>
+        <p>SimplyPresent is made by <a href="https://muze.nl/" target="_blank">{muze}</a> as OpenSource.
+          You can find the sourcecode at <a href="https://github.com/Poef/SimplyPresent" target="_blank">github.com/SimplyEdit/SimplyPresent.</a></p>
+        <p>SimplyPresent and SimplyCode are made possible with funding and help from the <a href="https://nlnet.nl/" target="_blank">NLnet Foundation</a>.    
+      </div>
+      <div class="about-right welcome-image">
+        <svg viewBox="0 0 124.332 18.909" version="1.1" id="svg5" xmlns="http://www.w3.org/2000/svg"><defs id="defs2"><path id="rect49632" d="M82.256 400.615H536.32v89.364H82.256z"/><path id="rect4851" d="M81.545 293.798h455.187v111.86H81.545z"/></defs><g id="layer1" transform="translate(-49.049 -59.89)"><path d="M117.781 70.261q0-1.866-.616-2.7-.606-.834-1.866-.834-1.09 0-1.658.843-.568.844-.568 2.208 0 1.573.7 2.425.711.853 1.877.853.947 0 1.534-.767.597-.768.597-2.028zm2.681-.682q0 1.26-.312 2.321-.313 1.061-.91 1.838-.587.767-1.468 1.203-.881.427-2.028.427-.871 0-1.563-.436-.682-.445-1.07-1.118v4.614h-.815q-.35 0-.682-.123-.332-.124-.588-.36-.246-.237-.407-.569-.152-.322-.152-.748v-6.329q0-1.298.304-2.387.303-1.09.937-1.857.645-.777 1.63-1.204.995-.426 2.368-.426 1.052 0 1.924.436.871.436 1.497 1.156.634.71.985 1.648.35.929.35 1.914z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83056"/><path d="M127.372 67.192q-.294-.114-.654-.209-.36-.095-.862-.095-.872 0-1.336.512-.464.512-.464 1.715v6.016h-.72q-.872 0-1.393-.427-.511-.426-.511-1.24V68.65q0-.777.208-1.526.218-.748.682-1.307.464-.56 1.203-.91.74-.35 1.772-.35.597 0 1.014.16.417.152.663.399.256.237.37.55.122.302.122.596v.929z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83053"/><path d="M134.234 68.167q0-.795-.54-1.184-.53-.388-1.44-.388-.465 0-.863.19-.397.18-.691.482-.294.294-.455.701-.16.408-.18.853l-.019.35h1.156q.938 0 1.516-.056.587-.057.919-.17.34-.124.464-.313.133-.2.133-.465zm2.444.313q0 1.43-1.165 1.99-1.166.549-3.743.549h-1.705q.152.985.957 1.573.805.578 1.97.578.815 0 1.696-.2.882-.208 1.507-.786h.094V73q0 .502-.189.929-.18.426-.625.748-.446.322-1.175.502-.73.19-1.79.19-.976 0-1.905-.37-.928-.37-1.648-1.061-.72-.692-1.156-1.658-.436-.966-.436-2.17 0-1.307.379-2.358.379-1.062 1.052-1.8.682-.74 1.62-1.128.947-.398 2.074-.398.815 0 1.564.284.758.275 1.335.796.588.521.938 1.28.35.757.35 1.695z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83050"/><path d="M145.67 71.834q0 1.667-1.127 2.605-1.128.929-3.24.929-.72 0-1.336-.18-.606-.17-1.061-.455-.455-.284-.71-.654-.247-.37-.247-.777v-1.174h.095q.208.189.55.378.34.18.766.323.427.132.891.208.474.076.938.076 1.895 0 1.895-1.147 0-.227-.086-.388-.085-.17-.322-.303-.227-.142-.653-.246-.427-.105-1.109-.209-1.667-.227-2.473-.9-.805-.673-.805-1.876 0-.73.313-1.392.322-.664.9-1.156.587-.493 1.402-.777.815-.294 1.828-.294.891 0 1.516.209.635.199 1.042.53.408.322.588.72.19.398.19.768v.985h-.095q-.408-.408-1.232-.682-.824-.285-1.762-.285-1.194 0-1.649.332-.445.332-.445.834 0 .19.076.34.085.143.303.266.227.114.635.209.407.094 1.08.208 1.658.275 2.501.995t.843 1.98z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83047"/><path d="M153.535 68.167q0-.795-.54-1.184-.53-.388-1.44-.388-.464 0-.862.19-.398.18-.692.482-.293.294-.455.701-.16.408-.18.853l-.019.35h1.156q.938 0 1.516-.056.588-.057.92-.17.34-.124.463-.313.133-.2.133-.465zm2.444.313q0 1.43-1.165 1.99-1.165.549-3.742.549h-1.706q.152.985.957 1.573.806.578 1.97.578.816 0 1.697-.2.88-.208 1.506-.786h.095V73q0 .502-.19.929-.18.426-.625.748t-1.175.502q-.73.19-1.79.19-.976 0-1.905-.37-.928-.37-1.648-1.061-.72-.692-1.156-1.658-.436-.966-.436-2.17 0-1.307.38-2.358.378-1.062 1.05-1.8.683-.74 1.62-1.128.948-.398 2.076-.398.815 0 1.563.284.758.275 1.336.796.587.521.938 1.28.35.757.35 1.695z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83044"/><path d="M165.437 75.13q-.871 0-1.393-.482-.511-.484-.511-1.223v-4.15q0-1.344-.55-1.941-.55-.607-1.563-.607-.853 0-1.374.616-.52.606-.52 1.734v6.054h-.778q-.833 0-1.335-.483-.493-.484-.493-1.223v-4.519q0-.833.284-1.639.284-.805.853-1.44.568-.634 1.459-1.013.9-.389 2.122-.389.929 0 1.743.303.815.294 1.421.89.616.588.976 1.45.36.863.36 1.971v6.092z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83041"/><path d="M167.166 65.079q0-.389.037-.663.048-.285.133-.512.085-.237.227-.436.152-.208.36-.464.275-.313.588-.512.322-.208.635-.208h.606v2.368h3.629v1.071q0 .407-.38.824-.378.417-1.174.417h-2.075v4.093q0 1.023.426 1.459.427.426 1.222.426 1.28 0 1.876-.37h.105v.93q0 .814-.578 1.278-.569.464-1.715.464-2 0-2.966-1.013-.956-1.023-.956-2.861z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83038"/><path class="st0" d="M54.764 69.142c-2.143-.344-2.831-.503-2.831-1.27 0-.53.397-1.19 2.222-1.19 1.19 0 2.302.238 3.122.687v-.582c0-1.428-1.323-2.275-3.572-2.275s-4.656 1.138-4.656 3.625c0 1.534.846 2.328 2.725 2.593 2.196.317 2.831.529 2.831 1.349 0 1.19-1.561 1.19-2.17 1.19-1.455 0-2.46-.343-3.122-.74v.529c0 .582 0 2.355 3.73 2.355 2.78 0 4.499-1.35 4.499-3.493 0-1.905-1.508-2.566-2.778-2.778z" id="path82600" style="stroke-width:.264583"/><path class="st0" d="M88.34 64.538c-3.678 0-5.716 2.09-5.716 5.874v5.794c0 1.614.582 2.302 1.958 2.302h1.032v-5.027s.027.397.635 1.112c.715.74 1.35.873 2.514.873 2.884 0 4.842-2.276 4.842-5.689 0-3.096-2.17-5.239-5.266-5.239zm.211 8.308c-1.296 0-2.514-.82-2.514-3.148 0-1.614 1.059-2.62 2.117-2.62 1.561 0 2.514.715 2.514 3.07-.027 1.64-.926 2.698-2.117 2.698z" id="path82602" style="stroke-width:.264583"/><path class="st0" d="M97.864 71.285v-7.937c0-1.614-.608-2.276-2.116-2.276h-.98v10.769c0 2.54 1.747 3.44 3.414 3.44.635 0 2.117-.133 2.117-1.403V72.9h-.477c-.846.027-1.958-.159-1.958-1.614z" id="path82604" style="stroke-width:.264583"/><path class="st0" d="M108.739 64.856h-1.508c-.291 2.09-1.085 4.895-1.905 6.535l-.318.662-.29-.688c-.583-1.376-1.35-3.52-1.747-5.24-.185-.846-1.059-1.296-1.8-1.296h-1.56c.529 2.831 2.354 7.409 3.915 9.737l.106.159-.106.211c-.476 1.059-1.058 1.482-2.143 1.588l-1.323.106v.608c0 1.138 1.006 1.561 1.879 1.561 2.143 0 2.805-.502 5.82-6.323 1.218-2.355 2.223-5.477 2.223-6.509.027-.503-.106-1.111-1.243-1.111z" id="path82606" style="stroke-width:.264583"/><path d="M60.135 63.56c.9 0 1.64-.689 1.64-1.535 0-.847-.74-1.535-1.64-1.535-.9 0-1.64.688-1.64 1.535 0 .846.74 1.534 1.64 1.534z" id="path82608" style="fill:#00d455;fill-opacity:1;stroke:#00d455;stroke-opacity:1;stroke-width:1.2;stroke-miterlimit:10"/><path class="st0" d="M69.713 67.184c1.217 0 1.852.741 1.852 2.17v3.916c0 1.402.502 1.878 2.01 1.878h.98v-5.741c0-1.826.952-2.223 1.772-2.223 1.323 0 1.932.715 1.932 2.276v3.81c0 1.217.344 1.878 2.116 1.878h.98v-5.635c0-3.202-1.694-4.975-4.737-4.975-1.481 0-2.698 1.085-3.148 1.8l-.37.582-.265-.635c-.291-.715-1.429-1.747-3.043-1.747-1.085 0-2.037.212-2.805.635-1.428.768-2.17 2.25-2.17 4.234v1.614c0 1.005-.475 1.508-1.48 1.614h-.054c-1.005-.08-1.481-.582-1.481-1.614v-3.546c0-1.772-.53-2.275-2.514-2.275h-.582v6.376c0 .953.238 1.694.688 2.196.661.715 2.064 1.508 3.89 1.508h.079c.502 0 .952-.079 1.323-.158l.079-.027c.9-.211 1.429-.529 1.72-.767l.08-.053c.37-.265 1.348-1.27 1.375-2.646v-2.196c0-.847.212-2.249 1.773-2.249z" id="path82610" style="stroke-width:.264583"/></g><style type="text/css" id="style82598">.st0{fill:#939598}</style></svg>
+      </div>
+      <button class="about-close" data-simply-command="aboutClose">✕</button>
+    </dialog>
+    </template>
+    <template id="menu">
+      <simply-render rel="about"></simply-render>
+    <button data-simply-command="showMenu" id="SimplyPresentButton" class="ds-button ds-button-naked ds-dropdown">
+      <img class="simplyPresentLogo" src="https://cdn.simplyedit.io/graphics/simply-present-centered.svg" alt="SimplyPresent">
+    </button>
+    <input id="SimplyPresentState" type="checkbox" class="ds-dropdown-state">
+    <nav class="ds-dropdown-nav">
+      <ul class="ds-dropdown-list">
+        <li><a class="ds-dropdown-item" tabindex="0" data-simply-command="present">Present</a></li>
+        <!-- li><a class="ds-dropdown-item" tabindex="0" data-simply-command="share">Share</a></li -->
+        <li><a class="ds-dropdown-item" tabindex="0" data-simply-command="edit">Edit</a></li>
+        <li class="ds-dropdown-divider"></li>
+        <li><a class="ds-dropdown-item" tabindex="0" data-simply-command="aboutOpen">About</a></li>
+      </ul>
+    </nav>
+    <div id="SimplyPresentBackdrop" data-simply-command="hideMenu"></div>
+    </template>
+    <template id="next-slide">
+      <div class="slides slides-next" data-simply-list="slides">
+      <template data-simply-template="title" rel="title"></template>
+      <template data-simply-template="highlight" rel="highlight"></template>
+      <template data-simply-template="hald-grid" rel="half-grid"></template>
+      <template data-simply-template="grid" rel="grid"></template>
+      <template data-simply-template="full" rel="full"></template>
+      <template data-simply-template="columns" rel="columns"></template>
+    </div>
+    </template>
+    <template id="sharing">
+      <div class="simplypresent-sharing">
+      <div
+           data-simply-field="hhsWords" 
+           data-simply-transformer="isShared"
+           data-simply-content="template"
+           data-simply-default-template="0"
+           data-simply-default-value="0"
+           >
+        <template data-simply-template="3">
+          <div>
+            <a class="ds-button ds-button-default" data-simply-field="hhsWords" data-simply-content="fixed" data-simply-command="copyLink" data-simply-transformer="slidesLink">Slides</a>
+            <a class="ds-button ds-button-default" data-simply-field="hhsWords" data-simply-content="fixed" data-simply-command="copyLink" data-simply-transformer="nextSlideLink">Next slide</a>
+            <a class="ds-button ds-button-default" data-simply-field="hhsWords" data-simply-content="fixed" data-simply-command="copyLink" data-simply-transformer="timerLink">Timer</a>
+            <a class="ds-button ds-button-default" data-simply-field="hhsWords" data-simply-content="fixed" data-simply-command="copyLink" data-simply-transformer="speakerNotesLink">Speaker notes</a>
+            <br>
+            Click the button to copy the sharing URL.<br>
+            <a data-simply-field="hhsWords" data-simply-content="fixed" data-simply-command="copyLink" data-simply-transformer="slidesLink">
+              <span data-simply-field="hhsWords" data-simply-transformer="slidesLink"></span>
+            </a>
+          </div>
+        </template>
+        <template data-simply-template="0">
+          <button class="ds-button ds-button-default" data-simply-command="share" >Start sharing</button> 
+        </template>
+      </div>
+    </div>
+    </template>
+    <template id="columns">
+      <section class="slide slide-columns">
+      <img class="logo" src="img/logo.svg" alt="{logo}">
+      <div class="text-content text-middle" data-simply-field="text">
+      </div>
+      <img class="placeholder cover" data-simply-field="image" src="img/placeholder.jpg" alt="">
+    </section>
+    </template>
+    <template id="full">
+      <section class="slide">
+      <img class="logo" src="img/logo.svg" alt="{logo}">
+      <div class="text-content text-center text-middle">
+        <div data-simply-field="text">text</div>
+      </div>
+    </section>
+    </template>
+    <template id="grid">
+      <section class="slide slide-grid">
+      <img class="logo logo-white" src="img/logo-white.svg" alt="{logo}">
+      <div class="text-content background-highlight text-middle text-center">
+        <i class="icon fa" data-simply-field="icon"></i>
+        <h2 data-simply-field="title">title</h2>
+      </div>
+      <img alt="placeholder" data-simply-field="image" class="placeholder cover" src="img/placeholder.jpg">
+      <div class="text-content" data-simply-field="text">
+      </div>
+      <div class="text-content background-grey" data-simply-field="more-text">
+      </div>
+    </section>
+    
+    </template>
+    <template id="half-grid">
+      <section class="slide slide-grid">
+      <img class="logo logo-white" src="img/logo-white.svg" alt="{logo}">
+      <div class="text-content background-highlight text-middle text-center">
+        <i class="icon fa" data-simply-field="icon"></i>
+        <h2 data-simply-field="title">title</h2>
+      </div>
+      <div class="text-content" data-simply-field="text">
+      </div>
+      <img data-simply-field="image" data-simply-content="attributes" data-simply-attributes="src" class="cover span-row-right placeholder" src="img/placeholder.jpg" alt="">
+    </section>
+    </template>
+    <template id="highlight">
+      <section class="slide background-highlight">
+      <img class="logo logo-white" src="img/logo-white.svg" alt="{logo}">
+      <div class="text-content text-center text-middle">
+        <h2 data-simply-field="title">title</h2>
+        <div data-simply-field="text">text</div>
+      </div>
+    </section>
+    </template>
+    <template id="title">
+      <section class="slide background-highlight">
+      <div class="text-content text-center text-middle">
+        <img class="center max50 logo-white" src="img/logo-white.svg" alt="{logo}">
+        <h1 data-simply-field="title">title</h1>
+        <div data-simply-field="text">text</div>
+      </div>
+    </section>
+    </template>
+    <template id="slides">
+      <div class="slides slides-present" data-simply-list="slides" data-simply-sortable>
+      <simply-render rel="welcome-slide"></simply-render>
+      <template data-simply-template="title" rel="title"></template>
+      <template data-simply-template="highlight" rel="highlight"></template>
+      <template data-simply-template="grid" rel="grid"></template>
+      <template data-simply-template="half-grid" rel="half-grid"></template>
+      <template data-simply-template="columns" rel="columns"></template>
+      <template data-simply-template="full" rel="full"></template>
+    </div>
+    </template>
+    <template id="welcome-slide">
+      <section class="slide slide-columns welcome-slide">
+      <a href="https://www.muze.nl/" class="logo">made by {muze}</a>
+      <div class="text-content text-middle" data-simply-field="text">
+        <h2>Welcome</h2>
+        <p>This slideshow is currently empty.<br><br></p>
+        <p><a class="button highlight" href="?simply-edit">Edit this slideshow</a></p>
+      </div>
+      <div class="welcome-image" title="SimplyPresent">
+    	<svg viewBox="0 0 124.332 18.909" version="1.1" id="svg5" xmlns="http://www.w3.org/2000/svg"><defs id="defs2"><path id="rect49632" d="M82.256 400.615H536.32v89.364H82.256z"/><path id="rect4851" d="M81.545 293.798h455.187v111.86H81.545z"/></defs><g id="layer1" transform="translate(-49.049 -59.89)"><path d="M117.781 70.261q0-1.866-.616-2.7-.606-.834-1.866-.834-1.09 0-1.658.843-.568.844-.568 2.208 0 1.573.7 2.425.711.853 1.877.853.947 0 1.534-.767.597-.768.597-2.028zm2.681-.682q0 1.26-.312 2.321-.313 1.061-.91 1.838-.587.767-1.468 1.203-.881.427-2.028.427-.871 0-1.563-.436-.682-.445-1.07-1.118v4.614h-.815q-.35 0-.682-.123-.332-.124-.588-.36-.246-.237-.407-.569-.152-.322-.152-.748v-6.329q0-1.298.304-2.387.303-1.09.937-1.857.645-.777 1.63-1.204.995-.426 2.368-.426 1.052 0 1.924.436.871.436 1.497 1.156.634.71.985 1.648.35.929.35 1.914z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83056"/><path d="M127.372 67.192q-.294-.114-.654-.209-.36-.095-.862-.095-.872 0-1.336.512-.464.512-.464 1.715v6.016h-.72q-.872 0-1.393-.427-.511-.426-.511-1.24V68.65q0-.777.208-1.526.218-.748.682-1.307.464-.56 1.203-.91.74-.35 1.772-.35.597 0 1.014.16.417.152.663.399.256.237.37.55.122.302.122.596v.929z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83053"/><path d="M134.234 68.167q0-.795-.54-1.184-.53-.388-1.44-.388-.465 0-.863.19-.397.18-.691.482-.294.294-.455.701-.16.408-.18.853l-.019.35h1.156q.938 0 1.516-.056.587-.057.919-.17.34-.124.464-.313.133-.2.133-.465zm2.444.313q0 1.43-1.165 1.99-1.166.549-3.743.549h-1.705q.152.985.957 1.573.805.578 1.97.578.815 0 1.696-.2.882-.208 1.507-.786h.094V73q0 .502-.189.929-.18.426-.625.748-.446.322-1.175.502-.73.19-1.79.19-.976 0-1.905-.37-.928-.37-1.648-1.061-.72-.692-1.156-1.658-.436-.966-.436-2.17 0-1.307.379-2.358.379-1.062 1.052-1.8.682-.74 1.62-1.128.947-.398 2.074-.398.815 0 1.564.284.758.275 1.335.796.588.521.938 1.28.35.757.35 1.695z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83050"/><path d="M145.67 71.834q0 1.667-1.127 2.605-1.128.929-3.24.929-.72 0-1.336-.18-.606-.17-1.061-.455-.455-.284-.71-.654-.247-.37-.247-.777v-1.174h.095q.208.189.55.378.34.18.766.323.427.132.891.208.474.076.938.076 1.895 0 1.895-1.147 0-.227-.086-.388-.085-.17-.322-.303-.227-.142-.653-.246-.427-.105-1.109-.209-1.667-.227-2.473-.9-.805-.673-.805-1.876 0-.73.313-1.392.322-.664.9-1.156.587-.493 1.402-.777.815-.294 1.828-.294.891 0 1.516.209.635.199 1.042.53.408.322.588.72.19.398.19.768v.985h-.095q-.408-.408-1.232-.682-.824-.285-1.762-.285-1.194 0-1.649.332-.445.332-.445.834 0 .19.076.34.085.143.303.266.227.114.635.209.407.094 1.08.208 1.658.275 2.501.995t.843 1.98z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83047"/><path d="M153.535 68.167q0-.795-.54-1.184-.53-.388-1.44-.388-.464 0-.862.19-.398.18-.692.482-.293.294-.455.701-.16.408-.18.853l-.019.35h1.156q.938 0 1.516-.056.588-.057.92-.17.34-.124.463-.313.133-.2.133-.465zm2.444.313q0 1.43-1.165 1.99-1.165.549-3.742.549h-1.706q.152.985.957 1.573.806.578 1.97.578.816 0 1.697-.2.88-.208 1.506-.786h.095V73q0 .502-.19.929-.18.426-.625.748t-1.175.502q-.73.19-1.79.19-.976 0-1.905-.37-.928-.37-1.648-1.061-.72-.692-1.156-1.658-.436-.966-.436-2.17 0-1.307.38-2.358.378-1.062 1.05-1.8.683-.74 1.62-1.128.948-.398 2.076-.398.815 0 1.563.284.758.275 1.336.796.587.521.938 1.28.35.757.35 1.695z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83044"/><path d="M165.437 75.13q-.871 0-1.393-.482-.511-.484-.511-1.223v-4.15q0-1.344-.55-1.941-.55-.607-1.563-.607-.853 0-1.374.616-.52.606-.52 1.734v6.054h-.778q-.833 0-1.335-.483-.493-.484-.493-1.223v-4.519q0-.833.284-1.639.284-.805.853-1.44.568-.634 1.459-1.013.9-.389 2.122-.389.929 0 1.743.303.815.294 1.421.89.616.588.976 1.45.36.863.36 1.971v6.092z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83041"/><path d="M167.166 65.079q0-.389.037-.663.048-.285.133-.512.085-.237.227-.436.152-.208.36-.464.275-.313.588-.512.322-.208.635-.208h.606v2.368h3.629v1.071q0 .407-.38.824-.378.417-1.174.417h-2.075v4.093q0 1.023.426 1.459.427.426 1.222.426 1.28 0 1.876-.37h.105v.93q0 .814-.578 1.278-.569.464-1.715.464-2 0-2.966-1.013-.956-1.023-.956-2.861z" style="font-size:19.4028px;line-height:1.25;font-family:Cocon-Regular;-inkscape-font-specification:'Cocon-Regular, Normal';text-align:center;text-anchor:middle;fill:#00d455;stroke-width:.264583" id="path83038"/><path class="st0" d="M54.764 69.142c-2.143-.344-2.831-.503-2.831-1.27 0-.53.397-1.19 2.222-1.19 1.19 0 2.302.238 3.122.687v-.582c0-1.428-1.323-2.275-3.572-2.275s-4.656 1.138-4.656 3.625c0 1.534.846 2.328 2.725 2.593 2.196.317 2.831.529 2.831 1.349 0 1.19-1.561 1.19-2.17 1.19-1.455 0-2.46-.343-3.122-.74v.529c0 .582 0 2.355 3.73 2.355 2.78 0 4.499-1.35 4.499-3.493 0-1.905-1.508-2.566-2.778-2.778z" id="path82600" style="stroke-width:.264583"/><path class="st0" d="M88.34 64.538c-3.678 0-5.716 2.09-5.716 5.874v5.794c0 1.614.582 2.302 1.958 2.302h1.032v-5.027s.027.397.635 1.112c.715.74 1.35.873 2.514.873 2.884 0 4.842-2.276 4.842-5.689 0-3.096-2.17-5.239-5.266-5.239zm.211 8.308c-1.296 0-2.514-.82-2.514-3.148 0-1.614 1.059-2.62 2.117-2.62 1.561 0 2.514.715 2.514 3.07-.027 1.64-.926 2.698-2.117 2.698z" id="path82602" style="stroke-width:.264583"/><path class="st0" d="M97.864 71.285v-7.937c0-1.614-.608-2.276-2.116-2.276h-.98v10.769c0 2.54 1.747 3.44 3.414 3.44.635 0 2.117-.133 2.117-1.403V72.9h-.477c-.846.027-1.958-.159-1.958-1.614z" id="path82604" style="stroke-width:.264583"/><path class="st0" d="M108.739 64.856h-1.508c-.291 2.09-1.085 4.895-1.905 6.535l-.318.662-.29-.688c-.583-1.376-1.35-3.52-1.747-5.24-.185-.846-1.059-1.296-1.8-1.296h-1.56c.529 2.831 2.354 7.409 3.915 9.737l.106.159-.106.211c-.476 1.059-1.058 1.482-2.143 1.588l-1.323.106v.608c0 1.138 1.006 1.561 1.879 1.561 2.143 0 2.805-.502 5.82-6.323 1.218-2.355 2.223-5.477 2.223-6.509.027-.503-.106-1.111-1.243-1.111z" id="path82606" style="stroke-width:.264583"/><path d="M60.135 63.56c.9 0 1.64-.689 1.64-1.535 0-.847-.74-1.535-1.64-1.535-.9 0-1.64.688-1.64 1.535 0 .846.74 1.534 1.64 1.534z" id="path82608" style="fill:#00d455;fill-opacity:1;stroke:#00d455;stroke-opacity:1;stroke-width:1.2;stroke-miterlimit:10"/><path class="st0" d="M69.713 67.184c1.217 0 1.852.741 1.852 2.17v3.916c0 1.402.502 1.878 2.01 1.878h.98v-5.741c0-1.826.952-2.223 1.772-2.223 1.323 0 1.932.715 1.932 2.276v3.81c0 1.217.344 1.878 2.116 1.878h.98v-5.635c0-3.202-1.694-4.975-4.737-4.975-1.481 0-2.698 1.085-3.148 1.8l-.37.582-.265-.635c-.291-.715-1.429-1.747-3.043-1.747-1.085 0-2.037.212-2.805.635-1.428.768-2.17 2.25-2.17 4.234v1.614c0 1.005-.475 1.508-1.48 1.614h-.054c-1.005-.08-1.481-.582-1.481-1.614v-3.546c0-1.772-.53-2.275-2.514-2.275h-.582v6.376c0 .953.238 1.694.688 2.196.661.715 2.064 1.508 3.89 1.508h.079c.502 0 .952-.079 1.323-.158l.079-.027c.9-.211 1.429-.529 1.72-.767l.08-.053c.37-.265 1.348-1.27 1.375-2.646v-2.196c0-.847.212-2.249 1.773-2.249z" id="path82610" style="stroke-width:.264583"/></g><style type="text/css" id="style82598">.st0{fill:#939598}</style></svg>
+      </div>
+    </section>
+    </template>
+    <template id="columns-edit">
+      <div class="slide slide-edit">
+      <simply-render rel="columns"></simply-render>
+      <simply-render rel="slide-editmode-options"></simply-render>
+    </div> 
+    </template>
+    <template id="full-edit">
+      <div class="slide slide-edit">
+      <simply-render rel="full"></simply-render>
+      <simply-render rel="slide-editmode-options"></simply-render> 
+    </div>
+    </template>
+    <template id="grid-edit">
+      <div class="slide slide-edit">
+      <simply-render rel="grid"></simply-render>
+      <simply-render rel="slide-editmode-options"></simply-render>
+    </div>
+    </template>
+    <template id="half-grid-edit">
+      <div class="slide slide-edit">
+      <simply-render rel="half-grid"></simply-render>
+      <simply-render rel="slide-editmode-options"></simply-render>
+    </div>
+    </template>
+    <template id="highlight-edit">
+      <div class="slide slide-edit">
+      <simply-render rel="highlight"></simply-render>
+      <simply-render rel="slide-editmode-options"></simply-render>
+    </div>
+    </template>
+    <template id="slide-editmode-options">
+      <div class="slide-editmode-options">
+      <div class="slide-notes slide-edit-field">
+        <label>Speaker notes
+          <textarea data-simply-field="notes"></textarea>
+        </label>
+      </div>
+    </div>
+    </template>
+    <template id="slides-editmode">
+      <div class="slide-time-edit">
+      <div class="slide-edit-field">
+        <label>Allowed presentation time is 
+          <input type="number" data-simply-field="totalTime" data-simply-transformer="secondsToMinutes" value=10 min=0 step=5> minutes.
+          <br>
+          This allows <span data-simply-field="totalTime" data-simply-transformer="timePerSlide" data-simply-readonly></span> seconds per slide.
+        </label>
+      </div>
+    </div>
+    <div class="slides slides-edit" data-simply-list="slides" data-simply-sortable>
+      <template data-simply-template="title" rel="title-edit"></template>
+      <template data-simply-template="highlight" rel="highlight-edit"></template>
+      <template data-simply-template="grid" rel="grid-edit"></template>
+      <template data-simply-template="half-grid" rel="half-grid-edit"></template>
+      <template data-simply-template="columns" rel="columns-edit"></template>
+      <template data-simply-template="full" rel="full-edit"></template>
+    </div>
+    </template>
+    <template id="title-edit">
+      <div class="slide slide-edit">
+      <simply-render rel="title"></simply-render>
+      <simply-render rel="slide-editmode-options"></div>
+    </div>
+    </template>
+    <template id="speaker-notes">
+      <div class="slides-speaker-notes" data-simply-list="slides">
+      <template>
+        <div class="slides-speaker-note" data-simply-field="notes"></div>
+      </template>
+    </div>
+    </template>
+    <template id="timer">
+      <div class="slides-timer">
+    	<input class="hidden" data-simply-field="totalTime">
+    	<label class="slides-timer-time total-time">
+    		Presentation time left
+          <span data-simply-field="total-time-left" data-simply-transformer="secondsToTime"></span>
+    	</label>
+    	<label class="slides-timer-time slide-time">
+    		Slide time left
+          <span data-simply-field="slide-time-left" data-simply-transformer="secondsToTime"></span>
+    	</label>
+    	<ul class="slides-timer-slides" data-simply-list="slides">
+    	<template>
+    		<li class="slides-timer-slide" data-simply-field="time" data-simply-transformer="timeToSize" data-simply-content="fixed">
+    			<label class="slides-timer-time"></label>
+    		</li>
+    	</template>
+    	</ul>
+    	<i class="slides-timer-cursor" data-simply-field="total-time-left" data-simply-transformer="timeToCursor"></i>
+    </div>
+    </template>
+    <!-- /Component HTML templates -->
+    <nav>
+      <simply-render rel="menu"></simply-render>
+    </nav>
+    <main data-simply-field="page" data-simply-content="template">
+    <!-- Page HTML templates -->
+    <template data-simply-template="next-slide">
+      <simply-render rel="next-slide"></simply-render>
+    </template>
+    <template data-simply-template="present">
+      <div class="slides-presentor">
+      <div class="left-main">
+        <simply-render rel="slides"></simply-render>
+      </div>
+      <div class="left-bottom">
+        <simply-render rel="speaker-notes"></simply-render>
+      </div>
+      <div class="right-top">
+        <simply-render rel="next-slide"></simply-render>
+      </div>
+      <div class="right-center">
+        <simply-render rel="timer"></simply-render>
+      </div>
+      <div class="right-bottom">
+        <simply-render rel="sharing"></simply-render>
+      </div>
+    </div>
+    </template>
+    <template data-simply-template="slides">
+      <simply-render rel="slides"></simply-render>
+    </template>
+    <template data-simply-template="slides-editmode">
+      <simply-render rel="slides-editmode"></simply-render>
+    </template>
+    <template data-simply-template="speaker-notes">
+      <simply-render rel="speaker-notes"></simply-render>
+    </template>
+    <template data-simply-template="timer">
+      <simply-render rel="timer"></simply-render>
+    </template>
+    <!-- /Page HTML templates -->
+    </main>
+    <script src="https://unpkg.com/simplyview@2.0.3/dist/simply.everything.js"></script>
+    <script src="https://canary.simplyedit.io/1/simply-edit.js" data-api-key="muze" data-simply-images="img/" data-simply-storage="solidStorage"></script>
+    <script>
+      /* Transformers */
+      editor.transformers = {
+        "isShared" : {
+          render : function(data) {
+            this.originalValue = data
+            return data.length
+          },
+          extract : function(data) {
+            return this.originalValue
+          }
+        },
+        "nextSlideLink" : {
+          render : function(data) {
+           this.originalValue = data
+           let value = editor.transformers.wordsLink.render(data)
+           value += "/#next-slide"
+           return value
+          },
+          extract : function(data) {
+            return this.originalValue
+          }
+        },
+        "slidesLink" : {
+          render : function(data) {
+           this.originalValue = data
+           let value = editor.transformers.wordsLink.render(data)
+           return value
+          },
+          extract : function(data) {
+            return this.originalValue
+          }
+        },
+        "speakerNotesLink" : {
+          render : function(data) {
+           this.originalValue = data
+           let value = editor.transformers.wordsLink.render(data)
+           value += "/#speaker-notes"
+           return value
+          },
+          extract : function(data) {
+            return this.originalValue
+          }
+        },
+        "timerLink" : {
+          render : function(data) {
+           this.originalValue = data
+           let value = editor.transformers.wordsLink.render(data)
+           value += "/#timer"
+           return value
+          },
+          extract : function(data) {
+            return this.originalValue
+          }
+        },
+        "wordsLink" : {
+          render : function(data) {
+           this.originalValue = data
+           let value = document.location.origin + document.location.pathname + "#words/" + data.join("/")
+           return value
+          },
+          extract : function(data) {
+            return this.originalValue
+          }
+        },
+        "secondsToMinutes" : {
+          render : function(data) {
+            return parseInt(data / 60)
+          },
+          extract : function(data) {
+            return data * 60
+          }
+        },
+        "timePerSlide" : {
+          render : function(data) {
+            this.originalData = data
+            if (!editor.pageData.slides) {
+              return data
+            }
+            let slidesCount = editor.pageData.slides.length
+            timePerSlide = parseInt(data / slidesCount)
+            return timePerSlide
+          }
+          ,
+          extract : function(data) {
+            return this.originalData
+          }
+        },
+        "secondsToTime" : {
+          render : function(data) {
+            this.originalValue = data
+            let total = parseInt(data) || 0
+            let hours = Math.floor(Math.abs(total)/3600) || 0
+            let minutes = Math.floor( (Math.abs(total)%3600) / 60) || 0
+            let seconds = (Math.abs(total)%60) || 0
+            return ((total>=0)?'':'-')
+              +(hours?hours+':':'')
+              +(''+(minutes?minutes:0)).padStart(2,'0')
+              +':'+(''+seconds).padStart(2,'0')
+          },
+          extract : function() {
+            return this.originalValue
+          }
+        },
+        "timeToCursor" : {
+          render : function(data) {
+            this.originalValue = data
+            let current = parseInt(data) || 0
+            let total = parseInt(editor.pageData.totalTime)
+            let delta = (current/total)*100
+            this.style.left = Math.min(100-delta,100)+'%'
+            return ''
+          },
+          extract : function() {
+            return this.originalValue
+          }
+        },
+        "timeToSize" : {
+          render : function(data) {
+            this.originalValue = data
+            if (data) {
+              let totalSize = editor.pageData.totalTime
+              let width = 100 * (parseInt(data) / parseInt(totalSize) )
+              this.style.flex = '0 1 '+ width +'%'
+            }
+          },
+          extract : function() {
+            return this.originalValue
+          }
+        }
+      };
+      /* /Transformers */
+    </script>
+    <script>
+      /* Sorters */
+      editor.sorters = {
+        
+      };
+      /* /Sorters */
+    </script>
+    <script>
+      window.addEventListener("simply-content-loaded", function() {
+        /* Data sources */
+        
+        /* /Data sources */
+      });
+    </script>
+    <!-- Foot HTML -->
+    <!-- hhs -->
+    <!-- This field is needed to have a databinding we can react on -->
+    <div class="slide" style="display: none" data-simply-field="slide">1</div>
+    <script src="https://cdn.jsdelivr.net/npm/@hyper-hyper-space/core@0.12.0/dist-browser/hhs.min.js"></script>
+    <script>
+    const simplyHHS = (function() {
+      class DocumentSpace extends HHS.HashedObject {
+    
+        constructor() {
+          super();
+          this.setRandomId();
+          this.addDerivedField('contents', new HHS.MutableReference());
+        }
+    
+        getClassName() {
+          return 'test/DocumentSpace';
+        }
+    
+        init() {
+    
+        }
+    
+        async validate(references) {
+          return this.getId() !== undefined && this.checkDerivedField('contents') 
+        }
+    
+        setValue(value) {
+          return this.contents.setValue(value).then(() => { this.getStore().save(this.contents) });
+        }
+    
+        getValue() {
+          return this.contents.getValue();
+        }
+    
+        async startSync() {
+    
+          let resources = this.getResources();
+    
+          if (resources === undefined) {
+            throw new Error('Cannot start sync: resources not configured.');
+          }
+    
+          if (resources.config?.id === undefined) {
+            throw new Error('Cannot start sync: local identity has not been defined.');
+          }
+    
+          if (resources.store === undefined) {
+            throw new Error('Cannot start sync: a local store has not been configured.')
+          }
+    
+          this._node = new HHS.MeshNode(resources);
+    
+          this._node.broadcast(this);
+          this._node.sync(this);
+    
+          this.contents.loadAndWatchForChanges();
+        }
+    
+        async stopSync() {
+          this._node?.stopBroadcast(this);
+          this._node?.stopSync(this);
+        }
+    
+        setResources(resources) {
+          super.setResources(resources);
+          this.contents.setResources(resources);
+        }
+    
+        addSyncCallback(cb) {
+          this.contents.addMutationOpCallback(async (mut) => {
+            if (!(await this._node.expectingMoreOps(this.contents, new Set([mut.hash()]), undefined, this))) {
+              await this.contents.applyOpFromStore(mut.hash());
+              cb(this.getValue());
+            }
+          });
+        }
+    
+      }
+    
+      HHS.HashedObject.registerClass('test/DocumentSpace', DocumentSpace);
+    
+      let store;
+      let key;
+      let id;
+    
+      let resources;
+    
+      let init = async () => {
+        store = new HHS.Store(new HHS.WorkerSafeIdbBackend('document-space-example'));
+    
+        key = await HHS.RSAKeyPair.generate(1024);
+        id = HHS.Identity.fromKeyPair({name: new HHS.RNGImpl().randomHexString(128)}, key);
+    
+        await store.save(key);
+        await store.save(id);
+    
+        resources = await HHS.Resources.create({config: {id: id}, store: store});
+        return resources
+      }
+      return {
+        DocumentSpace: DocumentSpace,
+        init: init,
+        ds: {
+          setValue: function() {}
+        }
+      }
+    })()
+    </script>
+    <!-- image-styles -->
+    <script>
+      document.addEventListener('simply-content-loaded',function() {
+        editor.settings['simply-image'] = {
+          style: [
+            {
+              description: 'Size',
+              selector: 'img',
+              styles: [
+                {
+                  class: 'cover',
+                  name: 'Cover',
+                  icon: 'fa-arrows'
+                },
+                {
+                  class: 'contain',
+                  name: 'Contain',
+                  icon: 'fa-expand'
+                },
+                {
+                  class: 'actual',
+                  name: 'Actual Size',
+                  icon: 'fa-picture-o'
+                }
+              ]
+            }
+          ]
+        }
+        editor.settings['simply-image-field'] = editor.settings['simply-image']
+      })
+    </script>
+    <!-- slidesKeyboard -->
+    <script>
+      const slidesKeyboard = (() => {
+        function keyPrev(event) {
+          if (document.body.hasAttribute('data-simply-edit')) {
+            // don't move slides with keys while in edit mode
+            return;
+          }
+          event.preventDefault()
+          return simplyApp.commands.prevSlide()
+        }
+    
+        function keyNext(e) {
+          if (document.body.hasAttribute('data-simply-edit')) {
+            // don't move slides with keys while in edit mode
+            return;
+          }
+          event.preventDefault()
+          return simplyApp.commands.nextSlide()
+        }
+    
+        return {
+          default: {
+            PageUp: keyPrev,
+            ArrowUp: keyPrev,
+            ArrowLeft: keyPrev,
+            PageDown: keyNext,
+            ArrowDown: keyNext,
+            ArrowRight: keyNext,
+            Escape: () => { simplyApp.actions.hideHelperMenu() },
+            Space: () => { if (document.body.dataset.simplyEdit) { return; } simplyApp.actions.showHelperMenu() }
+          }
+        }
+      })()
+    </script>
+    <!-- present-init -->
+    <script>
+        var simplyPresentRequest = null
+        var simplyPresentConnection = null
+    
+        const presentMode = (available) => {
+            document.querySelectorAll('[data-simply-command="startPresentation"]').forEach(button => {
+                button.style.display = available ? "inline" : "none"
+            })
+        }
+    	
+        if (window.location.hash=='#present') {
+    		presentMode(false)
+    		let connectionIdx = 0
+    		function addConnection(connection) {
+    			connection.connectionId = ++connectionIdx
+    			connection.addEventListener('message', (event) => {
+    				let slide = document.getElementById(event.data)
+    				if (slide) {
+    					window.location.hash = event.data
+    					slide.scrollIntoView()
+    				}
+    			})
+    		}
+    		if (navigator.presentation && navigator.presentation.receiver) {
+    			navigator.presentation.receiver.connectionList.then(list => {
+    				list.connections.map(connection => addConnection(connection))
+    				list.addEventListener('connectionavailable', (event) => {
+    					addconnection(event.connection)
+    				})
+    			})
+    		}
+    	} else {
+    		async function present() {
+    			try {
+    				let presentURL = new URL(window.location.href)
+    				presentURL.hash = '#present'
+    				simplyPresentRequest = new PresentationRequest([presentURL])
+    				let availability = await simplyPresentRequest.getAvailability()
+    				presentMode(availability.value)
+    				availability.onchange = () => { presentmode(availability.value)}
+    			} catch(e) {
+    				// ignore
+    			}
+    		}
+    		present()
+    		window.addEventListener('hashchange', (event) => {
+    			if (simplyPresentConnection) {
+    				simplyPresentConnection.send(window.location.hash)
+    			}
+    		})
+    	}
+    </script>
+    <!-- simply-edit-editmode -->
+    <script>
+      document.addEventListener("simply-content-loaded", function() {
+        editor.baseURL = "https://canary.simplyedit.io/1/muze/";
+        editor.baseURLClean = "https://canary.simplyedit.io/1/";
+    	editor.editmode.toolbars = [
+    		"https://yvo.muze.nl/simply-edit/simply/toolbar.simply-basepack.html",
+    		"https://yvo.muze.nl/simply-edit/simply/plugin.simply-scaler.html",
+    		"https://yvo.muze.nl/simply-edit/simply/plugin.simply-baseurl.html"
+    	];
+    });
+      document.addEventListener('simply-editmode', function() {
+        window.location.hash='#simply-edit'
+      })
+    </script>
+    <!-- rdflib -->
+    <script src="https://cdn.jsdelivr.net/npm/rdflib@2.2.32/dist/rdflib.min.js"></script>
+    <!-- start -->
+    <script>
+      simply.route.init({
+        root: document.location.pathname
+      });
+      document.addEventListener('simply-content-loaded', function() {
+        let url = new URL(document.location.href)
+        if (url.searchParams.has('simply-edit')) {
+          editor.pageData.page = 'slides-editmode'
+          url.searchParams.delete('simply-edit')
+          url.hash='#simply-edit'
+          window.setTimeout(function() {
+            window.location.href = url.href
+          },100)
+        } else {
+          editor.pageData.page='slides'
+        }
+        window.setTimeout(function() {
+            simplyApp.actions.start()
+        },10);
+      })
+    </script>
+    <!-- /Foot HTML -->
+  </body>
+</html>

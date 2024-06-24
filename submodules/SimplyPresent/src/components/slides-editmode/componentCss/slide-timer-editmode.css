@@ -1,0 +1,7 @@
+.slide-time-edit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.slide-time-edit input {
+	margin-left: 1em;
+}

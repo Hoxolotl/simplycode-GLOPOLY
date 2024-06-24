@@ -1,0 +1,92 @@
+:root {
+  	--timer-border-size: 3px;
+    --timer-border-radius: 3px;
+    --timer-border-color: var(--support-dark);
+  	--timer-box-padding: 0.5em;
+    --timer-current-color: var(--support-light);
+    --timer-cursor-color: #777;
+    --timer-cursor-width: 4px;
+    --timer-padding: 0.5em;
+    --timer-bar-color: var(--grey-light);
+    --timer-cursor-marker-size: 10px;
+}
+.hidden {
+	display: none;
+}
+.slides-timer {
+    padding: var(--timer-padding);
+    position: relative;
+}
+.slides-timer-slides {
+	border: var(--timer-border-size) solid var(--timer-border-color);
+    box-sizing: border-block;
+    padding: var(--timer-box-padding);
+    display: flex;
+	width: 100%;
+	list-style: none;
+	margin: 0;
+	margin-top: 1em;
+    gap: 2px;
+    border-radius: var(--timer-border-radius);
+}
+.slides-timer-slides.simply-empty:before {
+  content: '';
+  height: 2em;  
+}
+.slides-timer-slide {
+	display: block;
+	padding: 0;
+	background-color: var(--timer-bar-color);
+	height: 2em;
+	flex: 1;
+}
+.slides-timer-slide.slides-timer-current {
+	background-color: var(--timer-current-color);
+}
+.slides-timer-time span {
+	display: block;
+	appearance: none;
+	border: 0;
+	font-size: 2em;
+	text-align:right;
+	width: 6em;
+  	color: black;
+}
+.slides-timer-time.total-time {
+	position: absolute;
+	top: var(--timer-padding);
+	right: var(--timer-padding);
+	text-align:right;
+}
+.slides-timer-time.slide-time {
+	right: auto;
+	left: var(--timer-padding);
+	text-align:left;
+}
+.slides-timer-time.slide-time span {
+	text-align:left;
+}
+.slides-timer-cursor {
+	position: absolute;
+	height: 2em;
+	margin-top: calc(-2em - var(--timer-border-size) - var(--timer-box-padding));
+    width: var(--timer-cursor-width);
+    background-color: var(--timer-cursor-color);
+	margin-left: calc(var(--timer-padding) + var(--timer-box-padding) + var(--timer-border-size));
+	z-index:10;
+    transition: left 1s;
+}
+.slides-timer-cursor::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0;
+    height: calc(2em - 4px);
+    top: 0;
+  	border: var(--timer-cursor-marker-size) solid var(--timer-cursor-color);
+	border-right-color: transparent;
+	border-left-color: transparent;
+    margin-left: calc(2px - var(--timer-cursor-marker-size));
+	margin-top: calc(2px - var(--timer-cursor-marker-size));
+}
+

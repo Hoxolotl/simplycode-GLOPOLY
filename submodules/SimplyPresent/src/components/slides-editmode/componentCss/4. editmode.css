@@ -1,0 +1,46 @@
+body[data-simply-edit] {
+	overflow-y: auto;
+}
+.slides-editmode-options {
+  display: none;
+}
+.slides.slides-edit {
+  overflow-y: auto;
+  font-size: 1.1vw;
+  display: block;
+  scroll-snap-type: none;
+  overflow-x: auto;
+}
+.slide-edit .slides-editmode-options {
+  display: block;
+}
+.slides-edit .slide {
+	height: 50vh;
+	float: left;
+	margin: 0 0 0.5% 0.5%;
+	box-shadow: 2px 2px 5px #888;
+}
+.slides-edit .slide-edit {
+  	width: 49%;
+    height: auto;
+}
+.slide::before {
+	margin-top: 24px !important;
+	right: 24px !important;
+	padding: 10px !important;
+	border-radius: 50% !important;
+	border: 0px !important;
+}
+.background-grey[data-simply-field]:focus {
+	background: var(--grey-background) !important;
+}
+.background-highlight[data-simply-field]:focus {
+	background: var(--highlight-background) !important;
+}
+.slide-edit-field {
+  padding: 0.2em;
+}
+[data-simply-readonly] {
+  user-select: none;
+  outline: 0 !important;
+}

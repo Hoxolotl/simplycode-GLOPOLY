@@ -1,0 +1,52 @@
+<script>
+    var simplyPresentRequest = null
+    var simplyPresentConnection = null
+
+    const presentMode = (available) => {
+        document.querySelectorAll('[data-simply-command="startPresentation"]').forEach(button => {
+            button.style.display = available ? "inline" : "none"
+        })
+    }
+	
+    if (window.location.hash=='#present') {
+		presentMode(false)
+		let connectionIdx = 0
+		function addConnection(connection) {
+			connection.connectionId = ++connectionIdx
+			connection.addEventListener('message', (event) => {
+				let slide = document.getElementById(event.data)
+				if (slide) {
+					window.location.hash = event.data
+					slide.scrollIntoView()
+				}
+			})
+		}
+		if (navigator.presentation && navigator.presentation.receiver) {
+			navigator.presentation.receiver.connectionList.then(list => {
+				list.connections.map(connection => addConnection(connection))
+				list.addEventListener('connectionavailable', (event) => {
+					addconnection(event.connection)
+				})
+			})
+		}
+	} else {
+		async function present() {
+			try {
+				let presentURL = new URL(window.location.href)
+				presentURL.hash = '#present'
+				simplyPresentRequest = new PresentationRequest([presentURL])
+				let availability = await simplyPresentRequest.getAvailability()
+				presentMode(availability.value)
+				availability.onchange = () => { presentmode(availability.value)}
+			} catch(e) {
+				// ignore
+			}
+		}
+		present()
+		window.addEventListener('hashchange', (event) => {
+			if (simplyPresentConnection) {
+				simplyPresentConnection.send(window.location.hash)
+			}
+		})
+	}
+</script>
