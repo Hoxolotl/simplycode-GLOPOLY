@@ -66,6 +66,12 @@
     
     <!-- /Body HTML -->
     <!-- Component HTML templates -->
+    <template id="footer">
+      <div> 
+    	<span>This webpage is a work in progress 
+    	</span>    
+    </div>
+    </template>
     <template id="header">
       <h1>
       GLOPOLY.tech website
@@ -74,6 +80,16 @@
       portfolio website for GLOPOLY.tech, made with simplycode
     <a href="https://github.com/Hoxolotl/simplycode-GLOPOLY">source</a>
     </sub>
+    </template>
+    <template id="navbar">
+      <nav class="navbar">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    
     </template>
     <!-- /Component HTML templates -->
     <header data-simply-path="/" data-simply-field="header" data-simply-content="template" data-simply-default-value="Header">
@@ -84,8 +100,10 @@
     </nav>
     <div class="main" data-simply-field="page" data-simply-content="template">
     <!-- Page HTML templates -->
-    <template data-simply-template="header">
-      <div is="simply-component" rel="header"></div>
+    <template data-simply-template="Start">
+      <div is="simply-component" rel="navbar"></div>
+    <div is="simply-component" rel="footer"></div>
+    
     </template>
     <!-- /Page HTML templates -->
     </div>
