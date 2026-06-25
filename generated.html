@@ -13,7 +13,8 @@
     </style>
     <!-- /Page CSS -->
     <!-- Head HTML -->
-    
+    <!-- the-ds -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/muze-nl/the-ds@main/dist/theds.css">
     <!-- /Head HTML -->
     <script>
       var simplyDataApi = {};
@@ -41,6 +42,11 @@
             
           },
           /* /Commands */
+          /* Keyboard shortcuts */
+          keyboard: {
+            
+          },
+          /* /Keyboard shortcuts */
           /* Routes */
           routes: {
             "#simplypresent/" : function() {
@@ -70,42 +76,33 @@
     <!-- /Body HTML -->
     <!-- Component HTML templates -->
     <template id="footer">
-      <div> 
-    	<span>This webpage is a work in progress 
-    	</span>    
-    </div>
+      <sub>
+      Website for GLOPOLY.tech, made with simplycode
+    <a href="https://github.com/Hoxolotl/simplycode-GLOPOLY">source</a>
+    </sub>
     </template>
     <template id="header">
       <h1>
-      GLOPOLY.tech website
+      GLOPOLY.tech
     </h1>
-    <sub>
-      portfolio website for GLOPOLY.tech, made with simplycode
-    <a href="https://github.com/Hoxolotl/simplycode-GLOPOLY">source</a>
-    </sub>
+    <sub>"For fun and profit"</sub>
     </template>
     <template id="navbar">
       <nav class="navbar">
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#simplypresent/">Simply present</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
     
     </template>
     <!-- /Component HTML templates -->
-    <header data-simply-path="/" data-simply-field="header" data-simply-content="template" data-simply-default-value="Header">
-      <template data-simply-template='Header' rel="header"></template>
-    </header>
-    <nav>
-      <simply-render rel="menu"></simply-render>
-    </nav>
     <div class="main" data-simply-field="page" data-simply-content="template">
     <!-- Page HTML templates -->
     <template data-simply-template="Start">
-      <simply-render rel="navbar"></simply-render>
+      <simply-render rel="header"></simply-render>
+    <simply-render rel="navbar"></simply-render>
     <simply-render rel="footer"></simply-render>
     
     </template>
