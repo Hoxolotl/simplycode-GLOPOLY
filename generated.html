@@ -13,7 +13,34 @@
     </style>
     <!-- /Page CSS -->
     <!-- Head HTML -->
-    <!-- the-ds -->
+    <!-- metro-scripts (baseComponent/Metro) -->
+    <script src="https://cdn.jsdelivr.net/gh/muze-nl/metro@039b09716cddda24b8f21550c3c96ff01647d584/packages/metro/dist/everything.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/muze-nl/metro@039b09716cddda24b8f21550c3c96ff01647d584/packages/metro-oidc/dist/browser.js"></script>
+    
+    <script>
+      window.turtleCMS = {};
+    
+      window.turtleCMS.issuer = null;
+      window.turtleCMS.client = null;
+    
+      window.turtleCMS.createClient = function (issuer) {
+        window.turtleCMS.issuer = issuer;
+    
+        window.turtleCMS.client = metro.client().with(
+          metro.oidc.oidcmw({
+            issuer: issuer,
+            client_info: {
+              client_name: "Turtle CMS",
+              redirect_uris: [
+                window.location.origin + "/"
+              ]
+            }
+          })
+        );
+        return window.turtleCMS.client;
+      };
+    </script>
+    <!-- the-ds (baseComponent/th-ds) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/muze-nl/the-ds@main/dist/theds.css">
     <!-- /Head HTML -->
     <script>
@@ -28,18 +55,33 @@
         /* End of Raw API */
         /* Data API */
         simplyDataApi = {
+          // component/Solid-Turtle
+          "retrieveFile" : async function(issuer) {
+            let turtleClient = await turtleCMS.createClient(issuer)
+            console.log(turtleClient)
           
+            let file = turtleClient.get("public/profile/card.ttl")
+            console.log(file)
+          }
         };
         /* End of Data API */
         simplyApp = simply.app({
           /* Actions */
           actions: {
-            
+            // component/Solid-Turtle
+            "retrieveFile" : async function(issuer) {
+            	await simplyDataApi.retrieveFile(issuer)
+            }
           },
           /* /Actions */
           /* Commands */
           commands: {
-            
+            // component/Solid-Turtle
+            "retrievefile" : async function(form, values) {
+              console.log(form)
+              console.log(values)
+              await simplyApp.actions.retrieveFile(values.solidProvider);
+            }
           },
           /* /Commands */
           /* Keyboard shortcuts */
@@ -49,11 +91,13 @@
           /* /Keyboard shortcuts */
           /* Routes */
           routes: {
-            "#simplypresent/" : function() {
+            // page/Main
+            "#simplypresent/" : async function() {
              document.location.href = "https://glopoly.tech/submodules/SimplyPresent/src/generated.html";
             },
-            "/" : function() {
-              editor.pageData.page = 'Start'
+            // page/Main
+            "/" : async function() {
+              editor.pageData.page = 'Start'  
             }
           }
           /* /Routes */
@@ -75,18 +119,21 @@
     
     <!-- /Body HTML -->
     <!-- Component HTML templates -->
+    <!-- component/Footer-->
     <template id="footer">
       <sub>
       Website for GLOPOLY.tech, made with simplycode
     <a href="https://github.com/Hoxolotl/simplycode-GLOPOLY">source</a>
     </sub>
     </template>
+    <!-- component/Header-->
     <template id="header">
       <h1>
       GLOPOLY.tech
     </h1>
     <sub>"For fun and profit"</sub>
     </template>
+    <!-- component/Navbar-->
     <template id="navbar">
       <nav class="navbar">
       <ul>
@@ -97,11 +144,23 @@
     </nav>
     
     </template>
+    <!-- component/Solid-Turtle-->
+    <template id="solid-turtle">
+      <div>
+      <h3> Solid Turtle debug window
+      <form  data-simply-command="retrievefile">
+        <input type="text" name="solidProvider" data-simply-field="solidProvider" placeholder="https://solid-01.muze.nl">
+        <button>Retrieve FIle</button>
+      </form>
+    </div>
+    </template>
     <!-- /Component HTML templates -->
     <div class="main" data-simply-field="page" data-simply-content="template">
     <!-- Page HTML templates -->
+    <!-- page/Main-->
     <template data-simply-template="Start">
       <simply-render rel="header"></simply-render>
+    <simply-render rel="solid-turtle"></simply-render>
     <simply-render rel="navbar"></simply-render>
     <simply-render rel="footer"></simply-render>
     
