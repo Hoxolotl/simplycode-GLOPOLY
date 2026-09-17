@@ -1,4 +1,0 @@
-function(isEditMode) {
-  if (isEditMode) {
-  }
-}

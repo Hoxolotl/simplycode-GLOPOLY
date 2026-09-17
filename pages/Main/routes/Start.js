@@ -1,3 +1,3 @@
-function() {
-  editor.pageData.page = 'Start'
+async function() {
+  editor.pageData.page = 'Start'  
 }

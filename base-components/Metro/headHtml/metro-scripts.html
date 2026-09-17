@@ -1,2 +1,27 @@
 <script src="https://cdn.jsdelivr.net/gh/muze-nl/metro@039b09716cddda24b8f21550c3c96ff01647d584/packages/metro/dist/everything.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/muze-nl/metro@039b09716cddda24b8f21550c3c96ff01647d584/packages/metro/dist/everything.js.map"></script>
+<script src="https://cdn.jsdelivr.net/gh/muze-nl/metro@039b09716cddda24b8f21550c3c96ff01647d584/packages/metro-oidc/dist/browser.js"></script>
+
+<script>
+  window.solidMetro = {};
+
+  window.solidMetro.issuer = null;
+  window.solidMetro.client = null;
+
+  window.solidMetro.createClient = function(issuer) {
+    window.solidMetro.issuer = issuer;
+
+    window.solidMetro.client = metro.client().with(
+      metro.oidc.oidcmw({
+        issuer: issuer,
+        force_authorization: true,
+        client_info: {
+          client_name: "Turtle CMS",
+          redirect_uris: [
+            window.location.origin + "/"
+          ]
+        }
+      })
+    );
+    return window.solidMetro.client;
+  };
+</script>
