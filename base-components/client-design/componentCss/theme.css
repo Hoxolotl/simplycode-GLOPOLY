@@ -165,6 +165,20 @@ body > .main { flex: 1; min-width: 0; }
 .gp-prose dl { margin: 0; }
 .gp-prose dt { padding-block: .8rem; border-top: 1px solid var(--gp-border); }
 .gp-prose dd { margin: 0 0 1rem 1rem; color: var(--gp-muted); }
+.gp-import { display: block; }
+.gp-import h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.gp-import article > :first-child { margin-top: 0; }
+.gp-import img { max-width: 100%; height: auto; }
+.gp-import pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.gp-import table { display: block; overflow-x: auto; }
+.gp-import button {
+  color: var(--gp-background);
+  background: var(--gp-accent);
+  border: 1px solid var(--gp-accent);
+  padding: .5rem 1rem;
+  font: inherit;
+  cursor: pointer;
+}
 .gp-footer { padding-block: 1.5rem; border-top: 1px solid var(--gp-border); color: var(--gp-muted); font: .72rem/1.8 var(--gp-mono); }
 .gp-footer-inner { display: flex; justify-content: space-between; gap: 1rem; }
 .gp-footer p { margin: 0; }
