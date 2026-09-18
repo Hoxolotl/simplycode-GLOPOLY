@@ -1,0 +1,184 @@
+/* Project theme. Unlayered rules override theDS's layered defaults,
+   including when SimplyCode emits component CSS before theDS's link. */
+:root {
+  color-scheme: dark;
+  --gp-background: #09120f;
+  --gp-panel: #101e18;
+  --gp-text: #e7f1eb;
+  --gp-muted: #a3b8ab;
+  --gp-accent: #51ef9c;
+  --gp-accent-alt: #bef264;
+  --gp-border: #304a3c;
+  --gp-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --ds-primary: var(--gp-accent);
+  --ds-support: var(--gp-accent-alt);
+  --ds-font-body: Inter, "Segoe UI", Arial, sans-serif;
+  --ds-font-heading: var(--ds-font-body);
+  --ds-font-size: 1rem;
+  --ds-box-radius: 2px;
+  --ds-link-color: var(--gp-accent);
+  --ds-link-color-visited: #a5d8b9;
+  --ds-link-color-hover: #d7ffb0;
+  --ds-link-color-active: var(--gp-accent-alt);
+}
+
+html { min-height: 100%; background: var(--gp-background); }
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  color: var(--gp-text);
+  font: 1rem/1.7 var(--ds-font-body);
+  background:
+    radial-gradient(ellipse at 85% 0%, #bef2640d, transparent 48rem),
+    radial-gradient(ellipse at 10% 0%, #51ef9c0d, transparent 40rem),
+    linear-gradient(#51ef9c04 1px, transparent 1px),
+    linear-gradient(90deg, #51ef9c04 1px, transparent 1px),
+    var(--gp-background);
+  background-size: auto, auto, 48px 48px, 48px 48px, auto;
+}
+body *, body *::before, body *::after { box-sizing: border-box; }
+body ::selection { color: var(--gp-background); background: var(--gp-accent); }
+body a { text-underline-offset: .25em; }
+body a:focus-visible, body button:focus-visible, body input:focus-visible {
+  outline: 2px solid var(--gp-accent);
+  outline-offset: 5px;
+}
+.gp-shell { width: min(70rem, calc(100% - 5rem)); margin-inline: auto; }
+.gp-eyebrow {
+  margin: 0 0 1rem;
+  color: var(--gp-accent);
+  font: .72rem/1.6 var(--gp-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.gp-header { border-top: 3px solid var(--gp-accent); }
+.gp-masthead {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-block: 4.5rem 3.5rem;
+}
+.gp-brand, .gp-brand:visited {
+  display: inline-block;
+  color: var(--gp-text);
+  font-size: clamp(2.6rem, 6.5vw, 5.5rem);
+  font-weight: 850;
+  line-height: 1.1;
+  letter-spacing: -.065em;
+  text-decoration: none;
+}
+.gp-brand:hover { color: white; }
+.gp-brand span { color: var(--gp-accent); text-shadow: 0 0 28px #51ef9c40; }
+.gp-tagline { margin: 1.2rem 0 0; color: var(--gp-muted); font: .9rem/1.7 var(--gp-mono); }
+.gp-tagline::before { content: "> "; color: var(--gp-accent-alt); }
+
+/* Decorative vector logo: a floating cube above an illuminated pedestal. */
+.gp-signal {
+  flex: 0 0 12rem;
+  height: 12rem;
+  margin-right: 1rem;
+  background: radial-gradient(circle, #51ef9c12, transparent 70%);
+}
+.gp-signal svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.gp-signal svg path { vector-effect: non-scaling-stroke; }
+.gp-signal-cube, .gp-signal-pedestal {
+  fill: none;
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+}
+.gp-signal-cube {
+  stroke: var(--gp-accent);
+  filter: drop-shadow(0 0 6px #51ef9c40);
+}
+.gp-signal-top { fill: #51ef9c12; }
+.gp-signal-face { fill: #51ef9c05; }
+.gp-signal-pedestal {
+  stroke: var(--gp-accent-alt);
+  filter: drop-shadow(0 0 6px #bef26426);
+}
+.gp-signal-platform { fill: #bef26408; }
+.gp-signal-inset { opacity: .4; }
+.gp-nav { border-block: 1px solid var(--gp-border); background: #09120fb8; }
+.gp-nav ul { display: flex; gap: 2.25rem; list-style: none; padding: 0; margin-block: 0; }
+.gp-nav li { margin: 0; }
+.gp-nav a, .gp-nav a:visited {
+  display: block;
+  padding: 1.1rem 0;
+  border-bottom: 2px solid transparent;
+  color: var(--gp-muted);
+  font: .78rem/1.6 var(--gp-mono);
+  letter-spacing: .08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.gp-nav a:hover { color: var(--gp-text); border-bottom-color: var(--gp-accent-alt); }
+.gp-nav a[aria-current="page"] { color: var(--gp-accent); border-bottom-color: var(--gp-accent); }
+body > .main { flex: 1; min-width: 0; }
+.gp-page { padding-block: 3.5rem 5rem; overflow-wrap: anywhere; }
+.gp-page h1 {
+  margin: 0 0 2rem;
+  color: var(--gp-text);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -.035em;
+}
+.gp-page h2, .gp-page h3 { color: var(--gp-text); line-height: 1.35; }
+.gp-section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.gp-section-heading .gp-eyebrow { margin: 0; color: var(--gp-muted); }
+.gp-post {
+  position: relative;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid var(--gp-border);
+  border-left: 3px solid var(--gp-accent);
+  background: linear-gradient(115deg, #51ef9c05, transparent 60%), var(--gp-panel);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+.gp-post::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto auto;
+  width: 25px;
+  height: 1px;
+  background: var(--gp-accent-alt);
+  transform-origin: top left;
+  transform: rotate(45deg);
+}
+.gp-post .gp-eyebrow { color: var(--gp-accent-alt); margin-bottom: 1.4rem; }
+.gp-post h2 { margin: 0 0 .8rem; font-size: clamp(1.3rem, 3vw, 1.8rem); }
+.gp-post p { margin: 0; color: var(--gp-muted); }
+.gp-prose {
+  max-width: 75ch;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid var(--gp-border);
+  border-top: 2px solid var(--gp-accent-alt);
+  background: var(--gp-panel);
+}
+.gp-prose > :first-child { margin-top: 0; }
+.gp-prose > :last-child { margin-bottom: 0; }
+.gp-prose p { margin-block: 0 1.4rem; }
+.gp-prose dl { margin: 0; }
+.gp-prose dt { padding-block: .8rem; border-top: 1px solid var(--gp-border); }
+.gp-prose dd { margin: 0 0 1rem 1rem; color: var(--gp-muted); }
+.gp-footer { padding-block: 1.5rem; border-top: 1px solid var(--gp-border); color: var(--gp-muted); font: .72rem/1.8 var(--gp-mono); }
+.gp-footer-inner { display: flex; justify-content: space-between; gap: 1rem; }
+.gp-footer p { margin: 0; }
+.gp-footer a { white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .gp-shell { width: calc(100% - 2.5rem); }
+  .gp-masthead { padding-block: 3rem 2.5rem; }
+  .gp-masthead .gp-eyebrow { font-size: .62rem; letter-spacing: .08em; }
+  .gp-signal { display: none; }
+  .gp-nav ul { gap: 0; justify-content: space-between; flex-wrap: wrap; }
+  .gp-nav a { font-size: .68rem; letter-spacing: .035em; }
+  .gp-page { padding-block: 2.5rem 3.5rem; }
+  .gp-section-heading { display: block; }
+  .gp-section-heading .gp-eyebrow { margin-bottom: 1.25rem; }
+  .gp-footer-inner { flex-direction: column; gap: .5rem; }
+}
